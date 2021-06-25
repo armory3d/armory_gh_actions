@@ -20,7 +20,7 @@ async function main(): Promise<void> {
         core.info('Downloading armsdk')
         await getArmsdk(repository)
 
-        if (armory_version !== 'master') {
+        if (armory_version !== undefined) {
             core.info('Chaning armory version')
             await checkoutVersion('armsdk/armory', armory_version);
         }

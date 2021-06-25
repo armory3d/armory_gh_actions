@@ -51,7 +51,7 @@ function main() {
             yield installBlender();
             core.info('Downloading armsdk');
             yield getArmsdk(repository);
-            if (armory_version !== 'master') {
+            if (armory_version !== undefined) {
                 core.info('Chaning armory version');
                 yield checkoutVersion('armsdk/armory', armory_version);
             }
