@@ -8,8 +8,12 @@ inputs:
   target:
     description: 'Build target'
     required: true
+  armory_version:
+    description: 'Armory version to use'
+    required: false
+    default: 'master'
   repository:
-    description: 'Armory sdk repository path'
+    description: 'armsdk repository path'
     required: false
     default: 'https://github.com/armory3d/armsdk'
 runs:

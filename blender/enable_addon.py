@@ -1,6 +1,6 @@
 import os
 import bpy
-from addon_utils import check,paths,enable
+from addon_utils import check,enable
 
 if not check("armory")[1]:
     bpy.ops.preferences.addon_install(filepath='armsdk/armory.py')

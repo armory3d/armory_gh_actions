@@ -41,16 +41,21 @@ const path = __importStar(__nccwpck_require__(622));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const blend = core.getInput('blend', { required: true });
-            const target = core.getInput('target', { required: true });
-            const repository = core.getInput('repository', { required: false });
-            console.log(blend, target, repository);
-            core.info(blend);
-            core.info(target);
-            core.info(repository);
+            let blend = core.getInput('blend', { required: true });
+            let target = core.getInput('target', { required: true });
+            let armory_version = core.getInput('armory_version', { required: false });
+            let repository = core.getInput('repository', { required: false });
+            core.info('Installing blender');
             yield installBlender();
+            core.info('Downloading armsdk');
             yield getArmsdk(repository);
-            yield enableArmory();
+            if (armory_version !== 'master') {
+                core.info('Chaning armory version');
+                yield checkoutVersion('armsdk/armory', armory_version);
+            }
+            core.info('Enabling armory addon');
+            yield enableArmoryAddon();
+            core.info('Building project');
             yield buildProject(blend, target);
         }
         catch (error) {
@@ -60,28 +65,26 @@ function main() {
 }
 function installBlender() {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info('\u001b[38;2;255;0;0mInstalling blender');
         yield exec_1.exec('sudo', ['snap', 'install', 'blender', '--classic']);
     });
 }
 function getArmsdk(repository) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info('\u001b[38;2;255;0;0mDownloading armsdk');
         yield exec_1.exec('git', ['clone', '--recursive', repository]);
     });
 }
-function enableArmory() {
+function checkoutVersion(path, version) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info('\u001b[38;2;255;0;0mEnabling armory addon');
-        // await exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, '..', 'blender/enable_addon.py')]);
+        yield exec_1.exec('git', ['-C', path, 'checkout', version]);
+    });
+}
+function enableArmoryAddon() {
+    return __awaiter(this, void 0, void 0, function* () {
         yield runBlender(undefined, path.join(__dirname, '..', 'blender/enable_addon.py'));
     });
 }
 function buildProject(blend, target) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info('\u001b[38;2;255;0;0mBuilding project');
-        // let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, '..', 'blender/publish_project.py'), '--', target]
-        //await exec('blender', args);
         yield runBlender(blend, path.join(__dirname, '..', 'blender/publish_project.py'), [target]);
     });
 }

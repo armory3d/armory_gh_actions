@@ -7,19 +7,26 @@ import * as path from 'path';
 async function main(): Promise<void> {
     try {
 
-        
-        const blend = core.getInput('blend', { required: true });
-        const target = core.getInput('target', { required: true });
-        const repository = core.getInput('repository', { required: false });
-        
-        console.log(blend, target, repository);
-        core.info(blend);
-        core.info(target);
-        core.info(repository);
-        
+        let blend = core.getInput('blend', { required: true });
+        let target = core.getInput('target', { required: true });
+        let armory_version = core.getInput('armory_version', { required: false });
+        let repository = core.getInput('repository', { required: false });
+
+        core.info('Installing blender')
         await installBlender()
+
+        core.info('Downloading armsdk')
         await getArmsdk(repository)
-        await enableArmory()
+
+        if (armory_version !== 'master') {
+            core.info('Chaning armory version')
+            await checkoutVersion('armsdk/armory', armory_version);
+        }
+
+        core.info('Enabling armory addon')
+        await enableArmoryAddon()
+
+        core.info('Building project')
         await buildProject(blend, target)
 
     } catch (error) {
@@ -28,25 +35,22 @@ async function main(): Promise<void> {
 }
 
 async function installBlender() {
-    core.info('\u001b[38;2;255;0;0mInstalling blender')
     await exec('sudo', ['snap', 'install', 'blender', '--classic']);
 }
 
 async function getArmsdk(repository: string) {
-    core.info('\u001b[38;2;255;0;0mDownloading armsdk')
     await exec('git', ['clone', '--recursive', repository]);
 }
 
-async function enableArmory() {
-    core.info('\u001b[38;2;255;0;0mEnabling armory addon')
-    // await exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, '..', 'blender/enable_addon.py')]);
+async function checkoutVersion(path: string, version: string) {
+    await exec('git', ['-C', path, 'checkout', version]);
+}
+
+async function enableArmoryAddon() {
     await runBlender(undefined, path.join(__dirname, '..', 'blender/enable_addon.py'))
 }
 
 async function buildProject(blend: string, target: string) {
-    core.info('\u001b[38;2;255;0;0mBuilding project')
-    // let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, '..', 'blender/publish_project.py'), '--', target]
-    //await exec('blender', args);
     await runBlender(blend, path.join(__dirname, '..', 'blender/publish_project.py'), [target])
 }
 
