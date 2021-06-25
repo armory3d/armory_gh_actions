@@ -86,8 +86,11 @@ function main() {
             yield enableArmoryAddon();
             for (var _blend of blends) {
                 for (var _target of targets) {
-                    core.startGroup('\u001b[38;2;207;43;67mBuilding ' + _blend + ':' + _target);
-                    yield buildProject(_blend, _target, release);
+                    core.startGroup('\u001b[38;2;207;43;67m' + _blend + '-' + _target);
+                    console.timeStamp();
+                    var code = yield buildProject(_blend, _target, release);
+                    core.debug('code:' + code);
+                    console.timeEnd();
                     core.endGroup();
                 }
             }
@@ -130,7 +133,7 @@ function enableArmoryAddon() {
 }
 function buildProject(blend, target, release) {
     return __awaiter(this, void 0, void 0, function* () {
-        info('Building ' + blend + ', target: ' + target + ', release: ' + release);
+        info(blend + '-' + target + ' release: ' + release);
         yield runBlender(blend, path.join(__dirname, '..', 'blender/build_project.py'), [release ? 'release' : 'build', target]);
     });
 }
