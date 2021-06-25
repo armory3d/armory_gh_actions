@@ -7,9 +7,26 @@ import * as path from 'path';
 async function main(): Promise<void> {
     try {
 
-        let blend = core.getInput('blend', { required: true });
-        // let target = core.getInput('target', { required: true });
-        let targets: string[] = JSON.parse(core.getInput('targets', { required: true }));
+        let blends: string[] = [];
+        let blend = core.getInput('blend', { required: false });
+        if (!blend) {
+            let _blends = core.getInput('blends', { required: false });
+            if (_blends)
+                blends = JSON.parse(_blends);
+        } else {
+            blends.push(blend);
+        }
+
+        let targets: string[] = [];
+        let target = core.getInput('target', { required: false });
+        if (!target) {
+            let _targets = core.getInput('targets', { required: false });
+            if (_targets)
+                targets = JSON.parse(_targets);
+        } else {
+            targets.push(target);
+        }
+
         let armory_version = core.getInput('armory_version', { required: false });
         let repository = core.getInput('repository', { required: false });
         let release = core.getBooleanInput('release', { required: true });
@@ -28,9 +45,11 @@ async function main(): Promise<void> {
         core.info('Enabling armory addon')
         await enableArmoryAddon()
 
-        for (var target of targets) {
-            core.info('Building ' + blend + ' (' + target + ')')
-            await buildProject(blend, target, release)
+        for (var _blend of blends) {
+            for (var _target of targets) {
+                core.info('Building ' + _blend + ' (' + _target + ')')
+                await buildProject(_blend, _target, release)
+            }
         }
 
     } catch (error) {
@@ -55,7 +74,7 @@ async function enableArmoryAddon() {
 }
 
 async function buildProject(blend: string, target: string, release: boolean) {
-    await runBlender(blend, path.join(__dirname, '..', 'blender/build_project.py'), [release?'release':'build',target])
+    await runBlender(blend, path.join(__dirname, '..', 'blender/build_project.py'), [release ? 'release' : 'build', target])
 }
 
 async function runBlender(blend?: string, script?: string, extraArgs?: string[]) {

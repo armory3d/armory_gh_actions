@@ -4,10 +4,16 @@ author: 'tong <tong@disktree.net>'
 inputs:
   blend:
     description: 'Main blend file'
-    required: true
+    required: false
+  blends:
+    description: 'Blend files to build'
+    required: false
+  target:
+    description: 'Build target'
+    required: false
   targets:
     description: 'Build targets'
-    required: true
+    required:  false
   armory_version:
     description: 'Armory version to use'
     required: false

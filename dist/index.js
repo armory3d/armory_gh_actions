@@ -41,9 +41,26 @@ const path = __importStar(__nccwpck_require__(622));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let blend = core.getInput('blend', { required: true });
-            // let target = core.getInput('target', { required: true });
-            let targets = JSON.parse(core.getInput('targets', { required: true }));
+            let blends = [];
+            let blend = core.getInput('blend', { required: false });
+            if (!blend) {
+                let _blends = core.getInput('blends', { required: false });
+                if (_blends)
+                    blends = JSON.parse(_blends);
+            }
+            else {
+                blends.push(blend);
+            }
+            let targets = [];
+            let target = core.getInput('target', { required: false });
+            if (!target) {
+                let _targets = core.getInput('targets', { required: false });
+                if (_targets)
+                    targets = JSON.parse(_targets);
+            }
+            else {
+                targets.push(target);
+            }
             let armory_version = core.getInput('armory_version', { required: false });
             let repository = core.getInput('repository', { required: false });
             let release = core.getBooleanInput('release', { required: true });
@@ -57,9 +74,11 @@ function main() {
             }
             core.info('Enabling armory addon');
             yield enableArmoryAddon();
-            for (var target of targets) {
-                core.info('Building ' + blend + ' (' + target + ')');
-                yield buildProject(blend, target, release);
+            for (var _blend of blends) {
+                for (var _target of targets) {
+                    core.info('Building ' + _blend + ' (' + _target + ')');
+                    yield buildProject(_blend, _target, release);
+                }
             }
         }
         catch (error) {
