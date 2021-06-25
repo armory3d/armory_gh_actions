@@ -1,13 +1,13 @@
 
-import * as core from '@actions/core';
+import core from '@actions/core';
 import { exec } from '@actions/exec';
 import * as fs from 'fs';
 import * as path from 'path';
 
 async function main(): Promise<void> {
+    let blends: string[] = [];
+    let targets: string[] = [];
     try {
-
-        let blends: string[] = [];
         let blend = core.getInput('blend', { required: false });
         if (!blend) {
             let _blends = core.getInput('blends', { required: false });
@@ -16,8 +16,18 @@ async function main(): Promise<void> {
         } else {
             blends.push(blend);
         }
+        for (var i in blends) {
+            let _blend = blends[i];
+            if (path.extname(_blend) !== 'blend') {
+                if (fs.lstatSync(_blend).isDirectory()) {
+                    let p = path.join(_blend, _blend + '.blend')
+                    if (fs.existsSync(p)) {
+                        blends[i] = p;
+                    }
+                }
+            }
+        }
 
-        let targets: string[] = [];
         let target = core.getInput('target', { required: false });
         if (!target) {
             let _targets = core.getInput('targets', { required: false });
@@ -29,22 +39,18 @@ async function main(): Promise<void> {
 
         let armory_version = core.getInput('armory_version', { required: false });
         let repository = core.getInput('repository', { required: false });
-        let release = core.getBooleanInput('release', { required: true });
+        let release = core.getBooleanInput('release', { required: false });
 
-        core.info('Installing blender')
         await installBlender()
 
-        if( !fs.existsSync('armsdk') ) {
-            core.info('Downloading armsdk')
+        if (!fs.existsSync('armsdk')) {
             await getArmsdk(repository)
         }
 
         if (armory_version !== undefined) {
-            core.info('Chaning armory version')
             await checkoutVersion('armsdk/armory', armory_version);
         }
 
-        core.info('Enabling armory addon')
         await enableArmoryAddon()
 
         for (var _blend of blends) {
@@ -56,26 +62,38 @@ async function main(): Promise<void> {
 
     } catch (error) {
         core.setFailed(error.message);
+    } finally {
+        core.exportVariable('build_status', 1)
+        core.setOutput('build-status', 1)
     }
 }
 
+function info(str: string) {
+    console.info('\u001b[48;207;43;67;0m' + str);
+}
+
 async function installBlender() {
+    info('Installing blender')
     await exec('sudo', ['snap', 'install', 'blender', '--classic']);
 }
 
 async function getArmsdk(repository: string) {
+    info('Cloning armsdk')
     await exec('git', ['clone', '--recursive', repository]);
 }
 
 async function checkoutVersion(path: string, version: string) {
+    info('Checkout ' + version + ' of ' + path)
     await exec('git', ['-C', path, 'checkout', version]);
 }
 
 async function enableArmoryAddon() {
+    info('Enabling armory addon')
     await runBlender(undefined, path.join(__dirname, '..', 'blender/enable_addon.py'))
 }
 
 async function buildProject(blend: string, target: string, release: boolean) {
+    info('Building ' + blend + ', target: ' + target + ', release: ' + release)
     await runBlender(blend, path.join(__dirname, '..', 'blender/build_project.py'), [release ? 'release' : 'build', target])
 }
 

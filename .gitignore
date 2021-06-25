@@ -1,6 +1,6 @@
 /build/
 /Kha/
-/lib/
 /node_modules/
 test/**
 !empty.blend
+/main.js

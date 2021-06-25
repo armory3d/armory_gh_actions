@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 109:
+/***/ 496:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -34,83 +34,105 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(186));
+const core_1 = __importDefault(__nccwpck_require__(186));
 const exec_1 = __nccwpck_require__(514);
 const fs = __importStar(__nccwpck_require__(747));
 const path = __importStar(__nccwpck_require__(622));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        let blends = [];
+        let targets = [];
         try {
-            let blends = [];
-            let blend = core.getInput('blend', { required: false });
+            let blend = core_1.default.getInput('blend', { required: false });
             if (!blend) {
-                let _blends = core.getInput('blends', { required: false });
+                let _blends = core_1.default.getInput('blends', { required: false });
                 if (_blends)
                     blends = JSON.parse(_blends);
             }
             else {
                 blends.push(blend);
             }
-            let targets = [];
-            let target = core.getInput('target', { required: false });
+            for (var i in blends) {
+                let _blend = blends[i];
+                if (path.extname(_blend) !== 'blend') {
+                    if (fs.lstatSync(_blend).isDirectory()) {
+                        let p = path.join(_blend, _blend + '.blend');
+                        if (fs.existsSync(p)) {
+                            blends[i] = p;
+                        }
+                    }
+                }
+            }
+            let target = core_1.default.getInput('target', { required: false });
             if (!target) {
-                let _targets = core.getInput('targets', { required: false });
+                let _targets = core_1.default.getInput('targets', { required: false });
                 if (_targets)
                     targets = JSON.parse(_targets);
             }
             else {
                 targets.push(target);
             }
-            let armory_version = core.getInput('armory_version', { required: false });
-            let repository = core.getInput('repository', { required: false });
-            let release = core.getBooleanInput('release', { required: true });
-            core.info('Installing blender');
+            let armory_version = core_1.default.getInput('armory_version', { required: false });
+            let repository = core_1.default.getInput('repository', { required: false });
+            let release = core_1.default.getBooleanInput('release', { required: false });
             yield installBlender();
             if (!fs.existsSync('armsdk')) {
-                core.info('Downloading armsdk');
                 yield getArmsdk(repository);
             }
             if (armory_version !== undefined) {
-                core.info('Chaning armory version');
                 yield checkoutVersion('armsdk/armory', armory_version);
             }
-            core.info('Enabling armory addon');
             yield enableArmoryAddon();
             for (var _blend of blends) {
                 for (var _target of targets) {
-                    core.info('Building ' + _blend + ' (' + _target + ')');
+                    core_1.default.info('Building ' + _blend + ' (' + _target + ')');
                     yield buildProject(_blend, _target, release);
                 }
             }
         }
         catch (error) {
-            core.setFailed(error.message);
+            core_1.default.setFailed(error.message);
+        }
+        finally {
+            core_1.default.exportVariable('build_status', 1);
+            core_1.default.setOutput('build-status', 1);
         }
     });
 }
+function info(str) {
+    console.info('\u001b[48;207;43;67;0m' + str);
+}
 function installBlender() {
     return __awaiter(this, void 0, void 0, function* () {
+        info('Installing blender');
         yield exec_1.exec('sudo', ['snap', 'install', 'blender', '--classic']);
     });
 }
 function getArmsdk(repository) {
     return __awaiter(this, void 0, void 0, function* () {
+        info('Cloning armsdk');
         yield exec_1.exec('git', ['clone', '--recursive', repository]);
     });
 }
 function checkoutVersion(path, version) {
     return __awaiter(this, void 0, void 0, function* () {
+        info('Checkout ' + version + ' of ' + path);
         yield exec_1.exec('git', ['-C', path, 'checkout', version]);
     });
 }
 function enableArmoryAddon() {
     return __awaiter(this, void 0, void 0, function* () {
+        info('Enabling armory addon');
         yield runBlender(undefined, path.join(__dirname, '..', 'blender/enable_addon.py'));
     });
 }
 function buildProject(blend, target, release) {
     return __awaiter(this, void 0, void 0, function* () {
+        info('Building ' + blend + ', target: ' + target + ', release: ' + release);
         yield runBlender(blend, path.join(__dirname, '..', 'blender/build_project.py'), [release ? 'release' : 'build', target]);
     });
 }
@@ -1971,7 +1993,7 @@ module.exports = require("util");;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(109);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(496);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

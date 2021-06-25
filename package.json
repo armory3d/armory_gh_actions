@@ -3,11 +3,11 @@
   "version": "0.0.13",
   "description": "Setup armory sdk",
   "private": true,
-  "main": "lib/main.js",
+  "main": "dist/index.js",
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist && rm -f main.js",
     "build": "tsc",
-    "pack": "ncc build",
+    "pack": "ncc build main.js",
     "dist": "npm run build && npm run pack"
   },
   "keywords": [

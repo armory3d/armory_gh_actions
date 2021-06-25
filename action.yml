@@ -1,6 +1,12 @@
 name: 'Armory3D integration'
 description: 'Setup armory sdk'
 author: 'tong <tong@disktree.net>'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: 'activity'
+  color: 'red'
 inputs:
   blend:
     description: 'Main blend file'
@@ -25,9 +31,6 @@ inputs:
     description: 'armsdk repository path'
     required: false
     default: 'https://github.com/armory3d/armsdk'
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
-branding:
-  icon: 'x'
-  color: 'gray-dark'
+outputs:
+  build-status:
+    description: 'The status of the build that indicates if the run failed or passed. Possible outputs include: success|failed|skipped'
