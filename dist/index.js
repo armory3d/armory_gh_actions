@@ -34,11 +34,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __importDefault(__nccwpck_require__(186));
+const core = __importStar(__nccwpck_require__(186));
 const exec_1 = __nccwpck_require__(514);
 const fs = __importStar(__nccwpck_require__(747));
 const path = __importStar(__nccwpck_require__(622));
@@ -47,9 +44,9 @@ function main() {
         let blends = [];
         let targets = [];
         try {
-            let blend = core_1.default.getInput('blend', { required: false });
+            let blend = core.getInput('blend', { required: false });
             if (!blend) {
-                let _blends = core_1.default.getInput('blends', { required: false });
+                let _blends = core.getInput('blends', { required: false });
                 if (_blends)
                     blends = JSON.parse(_blends);
             }
@@ -67,18 +64,18 @@ function main() {
                     }
                 }
             }
-            let target = core_1.default.getInput('target', { required: false });
+            let target = core.getInput('target', { required: false });
             if (!target) {
-                let _targets = core_1.default.getInput('targets', { required: false });
+                let _targets = core.getInput('targets', { required: false });
                 if (_targets)
                     targets = JSON.parse(_targets);
             }
             else {
                 targets.push(target);
             }
-            let armory_version = core_1.default.getInput('armory_version', { required: false });
-            let repository = core_1.default.getInput('repository', { required: false });
-            let release = core_1.default.getBooleanInput('release', { required: false });
+            let armory_version = core.getInput('armory_version', { required: false });
+            let repository = core.getInput('repository', { required: false });
+            let release = core.getBooleanInput('release', { required: false });
             yield installBlender();
             if (!fs.existsSync('armsdk')) {
                 yield getArmsdk(repository);
@@ -89,17 +86,17 @@ function main() {
             yield enableArmoryAddon();
             for (var _blend of blends) {
                 for (var _target of targets) {
-                    core_1.default.info('Building ' + _blend + ' (' + _target + ')');
+                    core.info('Building ' + _blend + ' (' + _target + ')');
                     yield buildProject(_blend, _target, release);
                 }
             }
         }
         catch (error) {
-            core_1.default.setFailed(error.message);
+            core.setFailed(error.message);
         }
         finally {
-            core_1.default.exportVariable('build_status', 1);
-            core_1.default.setOutput('build-status', 1);
+            core.exportVariable('build_status', 1);
+            core.setOutput('build-status', 1);
         }
     });
 }
