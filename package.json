@@ -1,10 +1,11 @@
 {
   "name": "armory-actions",
-  "version": "0.0.0",
+  "version": "0.0.13",
   "description": "Setup armory sdk",
   "private": true,
   "main": "lib/main.js",
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "tsc",
     "pack": "ncc build",
     "dist": "npm run build && npm run pack"

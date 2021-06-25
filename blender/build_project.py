@@ -21,9 +21,6 @@ wrd.arm_exporterlist[wrd.arm_exporterlist_index].name = 'Temp'
 wrd.arm_exporterlist[wrd.arm_exporterlist_index].arm_project_target = target
 wrd.arm_exporterlist[wrd.arm_exporterlist_index].arm_project_scene = bpy.context.scene
 
-print(mode)
-print(target)
-
 if mode == "release":
     bpy.ops.arm.publish_project()
 else:
