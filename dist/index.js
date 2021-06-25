@@ -41,8 +41,6 @@ const path = __importStar(__nccwpck_require__(622));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            core.info('\u001b[38;2;255;0;0mARMORY3D');
-            core.addPath('/path/to/mytool');
             const blend = core.getInput('blend', { required: true });
             const target = core.getInput('target', { required: true });
             const repository = core.getInput('repository', { required: false });
@@ -51,7 +49,7 @@ function main() {
             core.info(target);
             core.info(repository);
             yield installBlender();
-            yield installArmory(repository);
+            yield getArmsdk(repository);
             yield enableArmory();
             yield buildProject(blend, target);
         }
@@ -62,22 +60,42 @@ function main() {
 }
 function installBlender() {
     return __awaiter(this, void 0, void 0, function* () {
+        core.info('\u001b[38;2;255;0;0mInstalling blender');
         yield exec_1.exec('sudo', ['snap', 'install', 'blender', '--classic']);
     });
 }
-function installArmory(repository) {
+function getArmsdk(repository) {
     return __awaiter(this, void 0, void 0, function* () {
+        core.info('\u001b[38;2;255;0;0mDownloading armsdk');
         yield exec_1.exec('git', ['clone', '--recursive', repository]);
     });
 }
 function enableArmory() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield exec_1.exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, '..', 'blender/enable_addon.py')]);
+        core.info('\u001b[38;2;255;0;0mEnabling armory addon');
+        // await exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, '..', 'blender/enable_addon.py')]);
+        yield runBlender(undefined, path.join(__dirname, '..', 'blender/enable_addon.py'));
     });
 }
 function buildProject(blend, target) {
     return __awaiter(this, void 0, void 0, function* () {
-        let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, '..', 'blender/publish_project.py'), '--', target];
+        core.info('\u001b[38;2;255;0;0mBuilding project');
+        // let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, '..', 'blender/publish_project.py'), '--', target]
+        //await exec('blender', args);
+        yield runBlender(blend, path.join(__dirname, '..', 'blender/publish_project.py'), [target]);
+    });
+}
+function runBlender(blend, script, extraArgs) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let args = ['-noaudio', '-b'];
+        if (blend !== undefined)
+            args.push(blend);
+        if (script !== undefined)
+            args = args.concat(['--python', script]);
+        if (extraArgs !== undefined) {
+            args.push('--');
+            args = args.concat(extraArgs);
+        }
         yield exec_1.exec('blender', args);
     });
 }
