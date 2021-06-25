@@ -67,7 +67,7 @@ function main() {
             let release = core.getBooleanInput('release', { required: true });
             core.info('Installing blender');
             yield installBlender();
-            if (fs.existsSync('armsdk')) {
+            if (!fs.existsSync('armsdk')) {
                 core.info('Downloading armsdk');
                 yield getArmsdk(repository);
             }

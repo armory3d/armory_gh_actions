@@ -34,7 +34,7 @@ async function main(): Promise<void> {
         core.info('Installing blender')
         await installBlender()
 
-        if( fs.existsSync('armsdk') ) {
+        if( !fs.existsSync('armsdk') ) {
             core.info('Downloading armsdk')
             await getArmsdk(repository)
         }
