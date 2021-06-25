@@ -16,7 +16,8 @@ jobs:
           armory_version: "master"
           blend: "test/empty.blend"
           targets: '["html5","krom"]'
-      - run: |
+      - name: Test build files
+        run: |
           test -d test/Sources
           test -f test/khafile.js
           test -d test/build_empty
