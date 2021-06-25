@@ -87,7 +87,7 @@ function main() {
             for (var _blend of blends) {
                 core.startGroup(_blend);
                 for (var _target of targets) {
-                    core.startGroup(`$_blend $_target`);
+                    core.startGroup('Building' + _blend + ':' + _target);
                     yield buildProject(_blend, _target, release);
                     core.endGroup();
                 }
