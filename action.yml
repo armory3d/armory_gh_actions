@@ -1,0 +1,20 @@
+name: 'Setup armory'
+description: 'Setup armory sdk'
+author: 'tong <tong@disktree.net>'
+inputs:
+  blend:
+    description: 'Main blend file'
+    required: true
+  target:
+    description: 'Build target'
+    required: true
+  repository:
+    description: 'Armory sdk repository path'
+    required: false
+    default: 'https://github.com/armory3d/armsdk'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: 'x'
+  color: 'gray-dark'
