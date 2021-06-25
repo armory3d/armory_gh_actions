@@ -37,6 +37,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const exec_1 = __nccwpck_require__(514);
+const fs = __importStar(__nccwpck_require__(747));
 const path = __importStar(__nccwpck_require__(622));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -66,8 +67,10 @@ function main() {
             let release = core.getBooleanInput('release', { required: true });
             core.info('Installing blender');
             yield installBlender();
-            core.info('Downloading armsdk');
-            yield getArmsdk(repository);
+            if (fs.existsSync('armsdk')) {
+                core.info('Downloading armsdk');
+                yield getArmsdk(repository);
+            }
             if (armory_version !== undefined) {
                 core.info('Chaning armory version');
                 yield checkoutVersion('armsdk/armory', armory_version);

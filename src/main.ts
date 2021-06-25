@@ -34,8 +34,10 @@ async function main(): Promise<void> {
         core.info('Installing blender')
         await installBlender()
 
-        core.info('Downloading armsdk')
-        await getArmsdk(repository)
+        if( fs.existsSync('armsdk') ) {
+            core.info('Downloading armsdk')
+            await getArmsdk(repository)
+        }
 
         if (armory_version !== undefined) {
             core.info('Chaning armory version')
