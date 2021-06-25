@@ -39,11 +39,11 @@ async function installArmory(repository: string) {
 }
 
 async function enableArmory() {
-    await exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, 'blender/enable_addon.py')]);
+    await exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, '..', 'blender/enable_addon.py')]);
 }
 
 async function buildProject(blend: string, target: string) {
-    let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, 'blender/publish_project.py'),'--',target]
+    let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, '..', 'blender/publish_project.py'),'--',target]
     await exec('blender', args);
 }
 

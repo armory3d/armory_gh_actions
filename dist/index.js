@@ -72,12 +72,12 @@ function installArmory(repository) {
 }
 function enableArmory() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield exec_1.exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, 'blender/enable_addon.py')]);
+        yield exec_1.exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, '..', 'blender/enable_addon.py')]);
     });
 }
 function buildProject(blend, target) {
     return __awaiter(this, void 0, void 0, function* () {
-        let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, 'blender/publish_project.py'), '--', target];
+        let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, '..', 'blender/publish_project.py'), '--', target];
         yield exec_1.exec('blender', args);
     });
 }
