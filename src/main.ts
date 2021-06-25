@@ -27,7 +27,7 @@ async function main(): Promise<void> {
         core.info('Enabling armory addon')
         await enableArmoryAddon()
 
-        for (var target in targets) {
+        for (var target of targets) {
             core.info('Building ' + blend + ' (' + target + ')')
             await buildProject(blend, target)
         }

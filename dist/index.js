@@ -56,7 +56,7 @@ function main() {
             }
             core.info('Enabling armory addon');
             yield enableArmoryAddon();
-            for (var target in targets) {
+            for (var target of targets) {
                 core.info('Building ' + blend + ' (' + target + ')');
                 yield buildProject(blend, target);
             }
