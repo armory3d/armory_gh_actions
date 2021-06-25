@@ -85,10 +85,13 @@ function main() {
             }
             yield enableArmoryAddon();
             for (var _blend of blends) {
+                core.startGroup(_blend);
                 for (var _target of targets) {
-                    core.info('Building ' + _blend + ' (' + _target + ')');
+                    core.startGroup(`$_blend $_target`);
                     yield buildProject(_blend, _target, release);
+                    core.endGroup();
                 }
+                core.endGroup();
             }
         }
         catch (error) {
@@ -101,7 +104,7 @@ function main() {
     });
 }
 function info(str) {
-    console.info('\u001b[48;207;43;67;0m' + str);
+    console.info('\u001b[35m' + str);
 }
 function installBlender() {
     return __awaiter(this, void 0, void 0, function* () {

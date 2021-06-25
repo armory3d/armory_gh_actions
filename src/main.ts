@@ -27,12 +27,12 @@ async function main(): Promise<void> {
                 }
             }
         }
-
+        
         let target = core.getInput('target', { required: false });
         if (!target) {
             let _targets = core.getInput('targets', { required: false });
             if (_targets)
-                targets = JSON.parse(_targets);
+            targets = JSON.parse(_targets);
         } else {
             targets.push(target);
         }
@@ -40,24 +40,27 @@ async function main(): Promise<void> {
         let armory_version = core.getInput('armory_version', { required: false });
         let repository = core.getInput('repository', { required: false });
         let release = core.getBooleanInput('release', { required: false });
-
+        
         await installBlender()
-
+        
         if (!fs.existsSync('armsdk')) {
             await getArmsdk(repository)
         }
-
+        
         if (armory_version !== undefined) {
             await checkoutVersion('armsdk/armory', armory_version);
         }
-
+        
         await enableArmoryAddon()
-
+        
         for (var _blend of blends) {
+            core.startGroup(_blend);
             for (var _target of targets) {
-                core.info('Building ' + _blend + ' (' + _target + ')')
+                core.startGroup(`$_blend $_target`);
                 await buildProject(_blend, _target, release)
+                core.endGroup();
             }
+            core.endGroup();
         }
 
     } catch (error) {
@@ -69,7 +72,7 @@ async function main(): Promise<void> {
 }
 
 function info(str: string) {
-    console.info('\u001b[48;207;43;67;0m' + str);
+    console.info('\u001b[35m' + str);
 }
 
 async function installBlender() {
