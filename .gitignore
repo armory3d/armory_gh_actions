@@ -2,3 +2,5 @@
 /Kha/
 /lib/
 /node_modules/
+test/**
+!empty.blend

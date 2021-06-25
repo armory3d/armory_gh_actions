@@ -1,0 +1,21 @@
+name: test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          blend: "test/empty.blend"
+          target: "html5"
+      - run: |
+          test -d Sources
+          test -f khafile.js
+          test -d build_empty
