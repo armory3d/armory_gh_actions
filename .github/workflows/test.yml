@@ -16,6 +16,6 @@ jobs:
           blend: "test/empty.blend"
           target: "html5"
       - run: |
-          test -d Sources
-          test -f khafile.js
-          test -d build_empty
+          test -d test/Sources
+          test -f test/khafile.js
+          test -d test/build_empty

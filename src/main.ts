@@ -8,7 +8,8 @@ async function main(): Promise<void> {
     try {
 
         let blend = core.getInput('blend', { required: true });
-        let target = core.getInput('target', { required: true });
+        // let target = core.getInput('target', { required: true });
+        let targets: string[] = JSON.parse(core.getInput('targets', { required: true }));
         let armory_version = core.getInput('armory_version', { required: false });
         let repository = core.getInput('repository', { required: false });
 
@@ -26,8 +27,10 @@ async function main(): Promise<void> {
         core.info('Enabling armory addon')
         await enableArmoryAddon()
 
-        core.info('Building project')
-        await buildProject(blend, target)
+        for (var target in targets) {
+            core.info('Building ' + blend + ' (' + target + ')')
+            await buildProject(blend, target)
+        }
 
     } catch (error) {
         core.setFailed(error.message);

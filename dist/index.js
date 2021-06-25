@@ -42,7 +42,8 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let blend = core.getInput('blend', { required: true });
-            let target = core.getInput('target', { required: true });
+            // let target = core.getInput('target', { required: true });
+            let targets = JSON.parse(core.getInput('targets', { required: true }));
             let armory_version = core.getInput('armory_version', { required: false });
             let repository = core.getInput('repository', { required: false });
             core.info('Installing blender');
@@ -55,8 +56,10 @@ function main() {
             }
             core.info('Enabling armory addon');
             yield enableArmoryAddon();
-            core.info('Building project');
-            yield buildProject(blend, target);
+            for (var target in targets) {
+                core.info('Building ' + blend + ' (' + target + ')');
+                yield buildProject(blend, target);
+            }
         }
         catch (error) {
             core.setFailed(error.message);
