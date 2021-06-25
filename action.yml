@@ -5,8 +5,8 @@ inputs:
   blend:
     description: 'Main blend file'
     required: true
-  target:
-    description: 'Build target'
+  targets:
+    description: 'Build targets'
     required: true
   armory_version:
     description: 'Armory version to use'
