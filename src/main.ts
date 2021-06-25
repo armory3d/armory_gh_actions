@@ -12,6 +12,7 @@ async function main(): Promise<void> {
         let targets: string[] = JSON.parse(core.getInput('targets', { required: true }));
         let armory_version = core.getInput('armory_version', { required: false });
         let repository = core.getInput('repository', { required: false });
+        let release = core.getBooleanInput('release', { required: true });
 
         core.info('Installing blender')
         await installBlender()
@@ -29,7 +30,7 @@ async function main(): Promise<void> {
 
         for (var target of targets) {
             core.info('Building ' + blend + ' (' + target + ')')
-            await buildProject(blend, target)
+            await buildProject(blend, target, release)
         }
 
     } catch (error) {
@@ -53,8 +54,8 @@ async function enableArmoryAddon() {
     await runBlender(undefined, path.join(__dirname, '..', 'blender/enable_addon.py'))
 }
 
-async function buildProject(blend: string, target: string) {
-    await runBlender(blend, path.join(__dirname, '..', 'blender/publish_project.py'), [target])
+async function buildProject(blend: string, target: string, release: boolean) {
+    await runBlender(blend, path.join(__dirname, '..', 'blender/build_project.py'), [release?'release':'build',target])
 }
 
 async function runBlender(blend?: string, script?: string, extraArgs?: string[]) {

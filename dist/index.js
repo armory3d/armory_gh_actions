@@ -46,6 +46,7 @@ function main() {
             let targets = JSON.parse(core.getInput('targets', { required: true }));
             let armory_version = core.getInput('armory_version', { required: false });
             let repository = core.getInput('repository', { required: false });
+            let release = core.getBooleanInput('release', { required: true });
             core.info('Installing blender');
             yield installBlender();
             core.info('Downloading armsdk');
@@ -58,7 +59,7 @@ function main() {
             yield enableArmoryAddon();
             for (var target of targets) {
                 core.info('Building ' + blend + ' (' + target + ')');
-                yield buildProject(blend, target);
+                yield buildProject(blend, target, release);
             }
         }
         catch (error) {
@@ -86,9 +87,9 @@ function enableArmoryAddon() {
         yield runBlender(undefined, path.join(__dirname, '..', 'blender/enable_addon.py'));
     });
 }
-function buildProject(blend, target) {
+function buildProject(blend, target, release) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield runBlender(blend, path.join(__dirname, '..', 'blender/publish_project.py'), [target]);
+        yield runBlender(blend, path.join(__dirname, '..', 'blender/build_project.py'), [release ? 'release' : 'build', target]);
     });
 }
 function runBlender(blend, script, extraArgs) {
