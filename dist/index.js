@@ -37,74 +37,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const exec_1 = __nccwpck_require__(514);
+const path = __importStar(__nccwpck_require__(622));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const repository = core.getInput('repository');
-            const blend = core.getInput('blend');
-            console.log(blend, repository);
-            installBlender();
-            installArmory(repository);
-            buildProject(blend);
-            /*
-            const repo = core.getInput('repo');
-            const projectfile = core.getInput('projectfile');
-            const target = core.getInput('target');
-            const graphics = core.getInput('graphics');
-            const audio = core.getInput('audio');
-            const shaderversion = core.getInput('shaderversion');
-            const ffmpeg = core.getInput('ffmpeg');
-            // const noshaders = core.getBooleanInput('noshaders');
-            // const noproject = core.getBooleanInput('noproject');
-            const compile = core.getInput('compile');
-            console.log(compile);
-    
-            if (target !== "html5") {
-                await setupNative();
-            }
-    
-            if (!fs.existsSync("Kha")) {
-                await setupKha(repo);
-            }
-    
-            let args = ['Kha/make.js'];
-            if (target !== undefined && target !== "") {
-                args.push('--target');
-                args.push(target);
-            }
-            if (projectfile !== undefined && projectfile !== "") {
-                args.push('--projectfile');
-                args.push(projectfile);
-            }
-            if (graphics !== undefined && graphics !== "") {
-                args.push('--graphics');
-                args.push(graphics);
-            }
-            if (audio !== undefined && audio !== "") {
-                args.push('--audio');
-                args.push(audio);
-            }
-            if (shaderversion !== undefined && shaderversion !== "") {
-                args.push('--shaderversion');
-                args.push(shaderversion);
-            }
-            if (ffmpeg !== undefined && ffmpeg !== "") {
-                args.push('--ffmpeg');
-                args.push(ffmpeg);
-            }
-            /* if (noshaders) {
-                args.push('--noshaders');
-            }
-            if (noproject) {
-                args.push('--noproject');
-            }
-            * /
-            if (compile === "true") {
-                args.push('--compile');
-            }
-    
-            await build(args);
-            */
+            core.info('\u001b[38;2;255;0;0mARMORY3D');
+            core.addPath('/path/to/mytool');
+            const blend = core.getInput('blend', { required: true });
+            const target = core.getInput('target', { required: true });
+            const repository = core.getInput('repository', { required: false });
+            console.log(blend, target, repository);
+            core.info(blend);
+            core.info(target);
+            core.info(repository);
+            yield installBlender();
+            yield installArmory(repository);
+            yield enableArmory();
+            yield buildProject(blend, target);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -119,12 +68,16 @@ function installBlender() {
 function installArmory(repository) {
     return __awaiter(this, void 0, void 0, function* () {
         yield exec_1.exec('git', ['clone', '--recursive', repository]);
-        yield exec_1.exec('blender', ['-noaudio', '-b', '--python', 'blender/enable_addon.py']);
     });
 }
-function buildProject(blend) {
+function enableArmory() {
     return __awaiter(this, void 0, void 0, function* () {
-        let args = ['-noaudio', '-b', blend, '--python', 'blender/publish_project.py'];
+        yield exec_1.exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, 'blender/enable_addon.py')]);
+    });
+}
+function buildProject(blend, target) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, 'blender/publish_project.py'), '--', target];
         yield exec_1.exec('blender', args);
     });
 }

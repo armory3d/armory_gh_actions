@@ -2,78 +2,28 @@
 import * as core from '@actions/core';
 import { exec } from '@actions/exec';
 import * as fs from 'fs';
+import * as path from 'path';
 
 async function main(): Promise<void> {
     try {
 
-        const repository = core.getInput('repository');
-        const blend = core.getInput('blend');
-        
-        console.log(blend, repository);
+        core.info('\u001b[38;2;255;0;0mARMORY3D')
 
-        installBlender()
-        installArmory(repository)
-        buildProject(blend)
+        core.addPath('/path/to/mytool');
 
-        /*
-        const repo = core.getInput('repo');
-        const projectfile = core.getInput('projectfile');
-        const target = core.getInput('target');
-        const graphics = core.getInput('graphics');
-        const audio = core.getInput('audio');
-        const shaderversion = core.getInput('shaderversion');
-        const ffmpeg = core.getInput('ffmpeg');
-        // const noshaders = core.getBooleanInput('noshaders');
-        // const noproject = core.getBooleanInput('noproject');
-        const compile = core.getInput('compile');
-        console.log(compile);
+        const blend = core.getInput('blend', { required: true });
+        const target = core.getInput('target', { required: true });
+        const repository = core.getInput('repository', { required: false });
 
-        if (target !== "html5") {
-            await setupNative();
-        }
+        console.log(blend, target, repository);
+        core.info(blend);
+        core.info(target);
+        core.info(repository);
 
-        if (!fs.existsSync("Kha")) {
-            await setupKha(repo);
-        }
-
-        let args = ['Kha/make.js'];
-        if (target !== undefined && target !== "") {
-            args.push('--target');
-            args.push(target);
-        }
-        if (projectfile !== undefined && projectfile !== "") {
-            args.push('--projectfile');
-            args.push(projectfile);
-        }
-        if (graphics !== undefined && graphics !== "") {
-            args.push('--graphics');
-            args.push(graphics);
-        }
-        if (audio !== undefined && audio !== "") {
-            args.push('--audio');
-            args.push(audio);
-        }
-        if (shaderversion !== undefined && shaderversion !== "") {
-            args.push('--shaderversion');
-            args.push(shaderversion);
-        }
-        if (ffmpeg !== undefined && ffmpeg !== "") {
-            args.push('--ffmpeg');
-            args.push(ffmpeg);
-        }
-        /* if (noshaders) {
-            args.push('--noshaders');
-        }
-        if (noproject) {
-            args.push('--noproject');
-        }
-        * /
-        if (compile === "true") {
-            args.push('--compile');
-        }
-
-        await build(args);
-        */
+        await installBlender()
+        await installArmory(repository)
+        await enableArmory()
+        await buildProject(blend, target)
 
     } catch (error) {
         core.setFailed(error.message);
@@ -86,11 +36,14 @@ async function installBlender() {
 
 async function installArmory(repository: string) {
     await exec('git', ['clone', '--recursive', repository]);
-    await exec('blender', ['-noaudio', '-b', '--python', 'blender/enable_addon.py']);
 }
 
-async function buildProject(blend: string) {
-    let args = ['-noaudio', '-b', blend, '--python', 'blender/publish_project.py']
+async function enableArmory() {
+    await exec('blender', ['-noaudio', '-b', '--python', path.join(__dirname, 'blender/enable_addon.py')]);
+}
+
+async function buildProject(blend: string, target: string) {
+    let args = ['-noaudio', '-b', blend, '--python', path.join(__dirname, 'blender/publish_project.py'),'--',target]
     await exec('blender', args);
 }
 
