@@ -84,6 +84,7 @@ function main() {
                 yield checkoutVersion('armsdk/armory', armory_version);
             }
             yield enableArmoryAddon();
+            core.startGroup('\u001b[38;2;255;0;0mBuilding ' + blends.length + 'x' + targets.length + ' projects');
             for (var _blend of blends) {
                 for (var _target of targets) {
                     core.startGroup('\u001b[38;2;255;0;0mBuilding ' + _blend + ':' + _target);
@@ -91,6 +92,7 @@ function main() {
                     core.endGroup();
                 }
             }
+            core.endGroup();
         }
         catch (error) {
             core.setFailed(error.message);
@@ -118,7 +120,7 @@ function getArmsdk(repository) {
 }
 function checkoutVersion(path, version) {
     return __awaiter(this, void 0, void 0, function* () {
-        info('Checkout ' + version + ' of ' + path);
+        info('Checkout ' + path + ' ' + version);
         yield exec_1.exec('git', ['-C', path, 'checkout', version]);
     });
 }
