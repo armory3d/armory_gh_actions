@@ -54,13 +54,11 @@ async function main(): Promise<void> {
         await enableArmoryAddon()
 
         for (var _blend of blends) {
-            core.startGroup(_blend);
             for (var _target of targets) {
-                core.startGroup('Building' + _blend + ':' + _target);
+                core.startGroup('\u001b[38;2;255;0;0mBuilding ' + _blend + ':' + _target);
                 await buildProject(_blend, _target, release)
                 core.endGroup();
             }
-            core.endGroup();
         }
 
     } catch (error) {
