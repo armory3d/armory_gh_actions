@@ -24,6 +24,10 @@ inputs:
     description: 'Armory version to use'
     required: false
     default: 'master'
+  iron_version:
+    description: 'Iron version to use'
+    required: false
+    default: 'master'
   release:
     description: 'Build in release mode'
     default: false

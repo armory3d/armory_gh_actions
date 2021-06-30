@@ -37,6 +37,7 @@ async function main(): Promise<void> {
         }
 
         let armory_version = core.getInput('armory_version', { required: false });
+        let iron_version = core.getInput('armory_version', { required: false });
         let repository = core.getInput('repository', { required: false });
         let release = core.getBooleanInput('release', { required: false });
 
@@ -49,13 +50,16 @@ async function main(): Promise<void> {
         if (armory_version !== undefined) {
             await checkoutVersion('armsdk/armory', armory_version);
         }
+        if (iron_version !== undefined) {
+            await checkoutVersion('armsdk/iron', iron_version);
+        }
 
         await enableArmoryAddon()
 
         for (var _blend of blends) {
             for (var _target of targets) {
                 console.time(_blend);
-                core.startGroup('\u001b[48;5;6m' + _blend + ' → ' + _target);
+                core.startGroup(_blend + ' → ' + _target);
                 var code = await buildProject(_blend, _target, release);
                 core.endGroup();
                 console.timeEnd(_blend);
