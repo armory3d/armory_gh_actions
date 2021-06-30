@@ -45,13 +45,13 @@ function main() {
         let targets = [];
         try {
             let blend = core.getInput('blend', { required: false });
-            if (!blend) {
+            if (blend) {
+                blends.push(blend);
+            }
+            else {
                 let _blends = core.getInput('blends', { required: false });
                 if (_blends)
                     blends = JSON.parse(_blends);
-            }
-            else {
-                blends.push(blend);
             }
             for (var i in blends) {
                 let _blend = blends[i];
@@ -86,12 +86,11 @@ function main() {
             yield enableArmoryAddon();
             for (var _blend of blends) {
                 for (var _target of targets) {
-                    core.startGroup('\u001b[48;5;6m' + _blend + ' → ' + _target);
                     console.time(_blend);
+                    core.startGroup('\u001b[48;5;6m' + _blend + ' → ' + _target);
                     var code = yield buildProject(_blend, _target, release);
-                    core.debug('code:' + code);
-                    console.timeEnd(_blend);
                     core.endGroup();
+                    console.timeEnd(_blend);
                 }
             }
         }

@@ -9,12 +9,11 @@ async function main(): Promise<void> {
     let targets: string[] = [];
     try {
         let blend = core.getInput('blend', { required: false });
-        if (!blend) {
-            let _blends = core.getInput('blends', { required: false });
-            if (_blends)
-                blends = JSON.parse(_blends);
-        } else {
+        if (blend) {
             blends.push(blend);
+        } else {
+            let _blends = core.getInput('blends', { required: false });
+            if (_blends) blends = JSON.parse(_blends);
         }
         for (var i in blends) {
             let _blend = blends[i];
@@ -55,15 +54,13 @@ async function main(): Promise<void> {
 
         for (var _blend of blends) {
             for (var _target of targets) {
-                core.startGroup('\u001b[48;5;6m' + _blend + ' → ' + _target);
                 console.time(_blend);
+                core.startGroup('\u001b[48;5;6m' + _blend + ' → ' + _target);
                 var code = await buildProject(_blend, _target, release);
-                core.debug('code:'+code);
-                console.timeEnd(_blend);
                 core.endGroup();
+                console.timeEnd(_blend);
             }
         }
-
     } catch (error) {
         core.setFailed(error.message);
     } finally {

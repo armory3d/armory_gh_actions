@@ -13,10 +13,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          armory_version: "master"
-          blend: "test/empty.blend"
-          targets: '["html5","krom"]'
-      - name: Test build files
+          armory_version: master
+          blend: test/empty.blend
+          targets: '["html5","krom","linux-hl"]'
+          release: false
+      - name: Test built files
         run: |
           test -d test/Sources
           test -f test/khafile.js
