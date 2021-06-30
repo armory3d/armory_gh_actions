@@ -55,11 +55,11 @@ async function main(): Promise<void> {
 
         for (var _blend of blends) {
             for (var _target of targets) {
-                core.startGroup('\u001b[38;2;207;43;67m' + _blend + '-' + _target);
-                console.timeStamp();
+                core.startGroup('\u001b[48;5;6m' + _blend + ' → ' + _target);
+                console.time(_blend);
                 var code = await buildProject(_blend, _target, release);
                 core.debug('code:'+code);
-                console.timeEnd();
+                console.timeEnd(_blend);
                 core.endGroup();
             }
         }
