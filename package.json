@@ -1,6 +1,6 @@
 {
   "name": "armory-actions",
-  "version": "0.0.13",
+  "version": "0.0.24",
   "description": "Setup armory sdk",
   "private": true,
   "main": "dist/index.js",

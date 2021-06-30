@@ -73,7 +73,8 @@ async function main(): Promise<void> {
 }
 
 function info(str: string) {
-    console.info('\u001b[35m' + str);
+    //console.info('\u001b[35m' + str);
+    console.info(str);
 }
 
 async function installBlender() {

@@ -105,7 +105,8 @@ function main() {
     });
 }
 function info(str) {
-    console.info('\u001b[35m' + str);
+    //console.info('\u001b[35m' + str);
+    console.info(str);
 }
 function installBlender() {
     return __awaiter(this, void 0, void 0, function* () {
