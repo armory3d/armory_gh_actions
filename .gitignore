@@ -1,6 +1,7 @@
 /build/
 /Kha/
 /node_modules/
-test/**
+/src/*.js
+/test/**
 !empty.blend
-/main.js
+armsdk/

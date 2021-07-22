@@ -2,164 +2,6 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 496:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(186));
-const exec_1 = __nccwpck_require__(514);
-const fs = __importStar(__nccwpck_require__(747));
-const path = __importStar(__nccwpck_require__(622));
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        let blends = [];
-        let targets = [];
-        try {
-            let blend = core.getInput('blend', { required: false });
-            if (blend) {
-                blends.push(blend);
-            }
-            else {
-                let _blends = core.getInput('blends', { required: false });
-                if (_blends)
-                    blends = JSON.parse(_blends);
-            }
-            for (var i in blends) {
-                let _blend = blends[i];
-                if (path.extname(_blend) !== 'blend') {
-                    if (fs.lstatSync(_blend).isDirectory()) {
-                        let p = path.join(_blend, _blend + '.blend');
-                        if (fs.existsSync(p)) {
-                            blends[i] = p;
-                        }
-                    }
-                }
-            }
-            let target = core.getInput('target', { required: false });
-            if (!target) {
-                let _targets = core.getInput('targets', { required: false });
-                if (_targets)
-                    targets = JSON.parse(_targets);
-            }
-            else {
-                targets.push(target);
-            }
-            let armory_version = core.getInput('armory_version', { required: false });
-            let iron_version = core.getInput('armory_version', { required: false });
-            let repository = core.getInput('repository', { required: false });
-            let release = core.getBooleanInput('release', { required: false });
-            yield installBlender();
-            if (!fs.existsSync('armsdk')) {
-                yield getArmsdk(repository);
-            }
-            if (armory_version !== undefined) {
-                yield checkoutVersion('armsdk/armory', armory_version);
-            }
-            if (iron_version !== undefined) {
-                yield checkoutVersion('armsdk/iron', iron_version);
-            }
-            yield enableArmoryAddon();
-            for (var _blend of blends) {
-                for (var _target of targets) {
-                    console.time(_blend);
-                    core.startGroup(_blend + ' → ' + _target);
-                    var code = yield buildProject(_blend, _target, release);
-                    core.endGroup();
-                    console.timeEnd(_blend);
-                }
-            }
-        }
-        catch (error) {
-            core.setFailed(error.message);
-        }
-        finally {
-            core.exportVariable('build_status', 1);
-            core.setOutput('build-status', 1);
-        }
-    });
-}
-function info(str) {
-    //console.info('\u001b[35m' + str);
-    console.info(str);
-}
-function installBlender() {
-    return __awaiter(this, void 0, void 0, function* () {
-        info('Installing blender');
-        yield exec_1.exec('sudo', ['snap', 'install', 'blender', '--classic']);
-    });
-}
-function getArmsdk(repository) {
-    return __awaiter(this, void 0, void 0, function* () {
-        info('Cloning armsdk');
-        yield exec_1.exec('git', ['clone', '--recursive', repository]);
-    });
-}
-function checkoutVersion(path, version) {
-    return __awaiter(this, void 0, void 0, function* () {
-        info('Checkout ' + path + ' ' + version);
-        yield exec_1.exec('git', ['-C', path, 'checkout', version]);
-    });
-}
-function enableArmoryAddon() {
-    return __awaiter(this, void 0, void 0, function* () {
-        info('Enabling armory addon');
-        yield runBlender(undefined, path.join(__dirname, '..', 'blender/enable_addon.py'));
-    });
-}
-function buildProject(blend, target, release) {
-    return __awaiter(this, void 0, void 0, function* () {
-        info(blend + '-' + target + ' release: ' + release);
-        yield runBlender(blend, path.join(__dirname, '..', 'blender/build_project.py'), [release ? 'release' : 'build', target]);
-    });
-}
-function runBlender(blend, script, extraArgs) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let args = ['-noaudio', '-b'];
-        if (blend !== undefined)
-            args.push(blend);
-        if (script !== undefined)
-            args = args.concat(['--python', script]);
-        if (extraArgs !== undefined) {
-            args.push('--');
-            args = args.concat(extraArgs);
-        }
-        yield exec_1.exec('blender', args);
-    });
-}
-main();
-
-
-/***/ }),
-
 /***/ 351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -1895,66 +1737,213 @@ function copyFile(srcFile, destFile, force) {
 
 /***/ }),
 
+/***/ 713:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __nccwpck_require__(186);
+const exec_1 = __nccwpck_require__(514);
+const fs = __nccwpck_require__(747);
+const path = __nccwpck_require__(622);
+function main() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let blend = core.getInput('blend', { required: true });
+        let exporter = core.getInput('exporter', { required: false });
+        //let blender_version = core.getInput('blender_version', { required: false });
+        let armsdk_repository = core.getInput('armsdk_repository', { required: false });
+        let armory_version = core.getInput('armory_version', { required: false });
+        //let renderpath = core.getInput('renderpath', { required: false });
+        core.startGroup('Settings');
+        core.info('blend: ' + blend);
+        core.info('exporter: ' + exporter);
+        //core.info('blender_version: ' + blender_version);
+        core.info('armsdk_repository: ' + armsdk_repository);
+        core.info('armory_version: ' + armory_version);
+        //core.info('renderpath: ' + renderpath);
+        core.endGroup();
+        core.startGroup('Install blender');
+        //await installBlender(blender_version);
+        yield installBlender();
+        yield exec_1.exec('blender', ['--version']);
+        core.endGroup();
+        core.startGroup('Installing armory');
+        if (!fs.existsSync('armsdk')) {
+            yield installArmsdk(armsdk_repository);
+            var code = yield enableArmoryAddon();
+            core.debug('code: ' + code);
+        }
+        core.endGroup();
+        if (armory_version !== undefined) {
+            info('Checkout ' + path + ' ' + armory_version);
+            yield checkoutVersion('armsdk/armory', armory_version);
+        }
+        if (exporter === undefined) {
+            core.startGroup('Build project');
+            try {
+                var code = yield buildProject(blend);
+                console.info('code: ' + code);
+                core.exportVariable('code', code);
+            }
+            catch (error) {
+                core.setFailed(error.message);
+                core.exportVariable('code', 1);
+            }
+            core.endGroup();
+        }
+        else {
+            core.startGroup('Export ' + blend + '→' + exporter);
+            try {
+                var code = yield exportProject(blend, exporter);
+                console.info('code: ' + code);
+                core.exportVariable('code', code);
+            }
+            catch (error) {
+                core.setFailed(error.message);
+                core.exportVariable('code', 1);
+            }
+            core.endGroup();
+        }
+    });
+}
+function info(str) {
+    //console.info('\u001b[35m' + str);
+    console.info(str);
+}
+// async function installBlender(version: string) {
+function installBlender() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let args = ['snap', 'install', 'blender'];
+        // if (version !== undefined) args.push('--channel=' + version); //TODO
+        args.push('--classic');
+        yield exec_1.exec('sudo', args);
+    });
+}
+function installArmsdk(repository) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield exec_1.exec('git', ['clone', '--recursive', repository]);
+    });
+}
+function checkoutVersion(path, version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield exec_1.exec('git', ['-C', path, 'checkout', version]);
+    });
+}
+function enableArmoryAddon() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield runBlender(undefined, 'blender/addon_install.py', ['armsdk']);
+    });
+}
+function buildProject(blend) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield runBlender(blend, 'blender/project_build.py');
+    });
+}
+function exportProject(blend, exporter) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield runBlender(blend, 'blender/project_export.py', [exporter]);
+    });
+}
+function runBlender(blend, script, extraArgs) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let out = '';
+        let err = '';
+        const options = {
+            listeners: {
+                stdout: (data) => {
+                    out += data.toString();
+                },
+                stderr: (data) => {
+                    err += data.toString();
+                }
+            }
+        };
+        let args = ['-noaudio', '-b'];
+        if (blend !== undefined)
+            args.push(blend);
+        if (script !== undefined)
+            args = args.concat(['--python', script]);
+        if (extraArgs !== undefined) {
+            args.push('--');
+            args = args.concat(extraArgs);
+        }
+        yield exec_1.exec('blender', args, options);
+    });
+}
+main();
+
+
+/***/ }),
+
 /***/ 357:
 /***/ ((module) => {
 
-module.exports = require("assert");;
+module.exports = require("assert");
 
 /***/ }),
 
 /***/ 129:
 /***/ ((module) => {
 
-module.exports = require("child_process");;
+module.exports = require("child_process");
 
 /***/ }),
 
 /***/ 614:
 /***/ ((module) => {
 
-module.exports = require("events");;
+module.exports = require("events");
 
 /***/ }),
 
 /***/ 747:
 /***/ ((module) => {
 
-module.exports = require("fs");;
+module.exports = require("fs");
 
 /***/ }),
 
 /***/ 87:
 /***/ ((module) => {
 
-module.exports = require("os");;
+module.exports = require("os");
 
 /***/ }),
 
 /***/ 622:
 /***/ ((module) => {
 
-module.exports = require("path");;
+module.exports = require("path");
 
 /***/ }),
 
 /***/ 304:
 /***/ ((module) => {
 
-module.exports = require("string_decoder");;
+module.exports = require("string_decoder");
 
 /***/ }),
 
 /***/ 213:
 /***/ ((module) => {
 
-module.exports = require("timers");;
+module.exports = require("timers");
 
 /***/ }),
 
 /***/ 669:
 /***/ ((module) => {
 
-module.exports = require("util");;
+module.exports = require("util");
 
 /***/ })
 
@@ -1993,12 +1982,14 @@ module.exports = require("util");;
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
-/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";/************************************************************************/
+/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
+/******/ 	
+/************************************************************************/
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(496);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(713);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

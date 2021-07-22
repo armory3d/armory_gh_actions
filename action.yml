@@ -1,40 +1,27 @@
-name: 'Armory3D integration'
-description: 'Setup armory sdk'
+name: 'Armory3D Setup'
+description: 'Setup Armory3D SDK'
 author: 'tong <tong@disktree.net>'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
-branding:
-  icon: 'activity'
-  color: 'red'
+  main: 'index.js'
 inputs:
   blend:
     description: 'Main blend file'
+    required: true
+  exporter:
+    description: 'Exporter name'
     required: false
-  blends:
-    description: 'Blend files to build'
-    required: false
-  target:
-    description: 'Build target'
-    required: false
-  targets:
-    description: 'Build targets'
-    required:  false
   armory_version:
     description: 'Armory version to use'
     required: false
     default: 'master'
-  iron_version:
-    description: 'Iron version to use'
-    required: false
-    default: 'master'
-  release:
-    description: 'Build in release mode'
-    default: false
-  repository:
-    description: 'armsdk repository path'
+  armsdk_repository:
+    description: 'Path to the armsdk repository'
     required: false
     default: 'https://github.com/armory3d/armsdk'
 outputs:
-  build-status:
-    description: 'The status of the build that indicates if the run failed or passed. Possible outputs include: success|failed|skipped'
+  code:
+    description: 'Exit code'
+branding:
+  icon: 'activity'
+  color: 'red'
