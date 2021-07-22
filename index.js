@@ -1771,27 +1771,22 @@ function main() {
         core.info('armory_version: ' + armory_version);
         //core.info('renderpath: ' + renderpath);
         core.endGroup();
-        core.startGroup('Install blender');
+        core.startGroup('Setup');
         //await installBlender(blender_version);
         yield installBlender();
         yield exec_1.exec('blender', ['--version']);
-        core.endGroup();
-        core.startGroup('Installing armory');
         if (!fs.existsSync('armsdk')) {
             yield installArmsdk(armsdk_repository);
-            var code = yield enableArmoryAddon();
-            core.debug('code: ' + code);
         }
-        core.endGroup();
-        if (armory_version !== undefined) {
-            info('Checkout ' + path + ' ' + armory_version);
+        if (armory_version !== undefined && armory_version !== 'master') {
             yield checkoutVersion('armsdk/armory', armory_version);
         }
+        yield enableArmoryAddon('armsdk');
+        core.endGroup();
         if (exporter === undefined) {
             core.startGroup('Build project');
             try {
                 var code = yield buildProject(blend);
-                console.info('code: ' + code);
                 core.exportVariable('code', code);
             }
             catch (error) {
@@ -1801,11 +1796,10 @@ function main() {
             core.endGroup();
         }
         else {
-            core.startGroup('Export ' + blend + '→' + exporter);
+            core.startGroup('Export ' + blend + ' : ' + exporter);
             try {
-                var code = yield exportProject(blend, exporter);
-                console.info('code: ' + code);
-                core.exportVariable('code', code);
+                yield exportProject(blend, exporter);
+                core.exportVariable('code', 0);
             }
             catch (error) {
                 core.setFailed(error.message);
@@ -1814,10 +1808,6 @@ function main() {
             core.endGroup();
         }
     });
-}
-function info(str) {
-    //console.info('\u001b[35m' + str);
-    console.info(str);
 }
 // async function installBlender(version: string) {
 function installBlender() {
@@ -1838,9 +1828,9 @@ function checkoutVersion(path, version) {
         yield exec_1.exec('git', ['-C', path, 'checkout', version]);
     });
 }
-function enableArmoryAddon() {
+function enableArmoryAddon(sdk_path) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield runBlender(undefined, path.join(__dirname, 'blender/addon_install.py'), ['armsdk']);
+        yield runBlender(undefined, path.join(__dirname, 'blender/addon_install.py'), [sdk_path]);
     });
 }
 function buildProject(blend) {
@@ -1855,16 +1845,10 @@ function exportProject(blend, exporter) {
 }
 function runBlender(blend, script, extraArgs) {
     return __awaiter(this, void 0, void 0, function* () {
-        let out = '';
-        let err = '';
         const options = {
             listeners: {
-                stdout: (data) => {
-                    out += data.toString();
-                },
-                stderr: (data) => {
-                    err += data.toString();
-                }
+                stdout: (buf) => { core.info('\u001b[38m' + buf.toString()); },
+                stderr: (buf) => { core.info('\u001b[35m' + buf.toString()); }
             }
         };
         let args = ['-noaudio', '-b'];

@@ -22,30 +22,23 @@ async function main(): Promise<void> {
     //core.info('renderpath: ' + renderpath);
     core.endGroup();
 
-    core.startGroup('Install blender');
+    core.startGroup('Setup');
     //await installBlender(blender_version);
     await installBlender();
     await exec('blender', ['--version']);
-    core.endGroup();
-
-    core.startGroup('Installing armory');
     if (!fs.existsSync('armsdk')) {
         await installArmsdk(armsdk_repository);
-        var code = await enableArmoryAddon();
-        core.debug('code: ' + code);
     }
-    core.endGroup();
-
-    if (armory_version !== undefined) {
-        info('Checkout ' + path + ' ' + armory_version)
+    if (armory_version !== undefined && armory_version !== 'master') {
         await checkoutVersion('armsdk/armory', armory_version);
     }
+    await enableArmoryAddon('armsdk');
+    core.endGroup();
 
     if (exporter === undefined) {
         core.startGroup('Build project');
         try {
             var code = await buildProject(blend);
-            console.info('code: ' + code);
             core.exportVariable('code', code);
         } catch (error) {
             core.setFailed(error.message);
@@ -53,22 +46,16 @@ async function main(): Promise<void> {
         }
         core.endGroup();
     } else {
-        core.startGroup('Export ' + blend + '→' + exporter);
+        core.startGroup('Export ' + blend + ' : ' + exporter);
         try {
-            var code = await exportProject(blend, exporter);
-            console.info('code: ' + code);
-            core.exportVariable('code', code);
+            await exportProject(blend, exporter);
+            core.exportVariable('code', 0);
         } catch (error) {
             core.setFailed(error.message);
             core.exportVariable('code', 1);
         }
         core.endGroup();
     }
-}
-
-function info(str: string) {
-    //console.info('\u001b[35m' + str);
-    console.info(str);
 }
 
 // async function installBlender(version: string) {
@@ -87,8 +74,8 @@ async function checkoutVersion(path: string, version: string) {
     await exec('git', ['-C', path, 'checkout', version]);
 }
 
-async function enableArmoryAddon() {
-    await runBlender(undefined, path.join(__dirname, 'blender/addon_install.py'), ['armsdk'])
+async function enableArmoryAddon(sdk_path: string) {
+    await runBlender(undefined, path.join(__dirname, 'blender/addon_install.py'), [sdk_path])
 }
 
 async function buildProject(blend: string) {
@@ -100,16 +87,10 @@ async function exportProject(blend: string, exporter: string) {
 }
 
 async function runBlender(blend?: string, script?: string, extraArgs?: string[]) {
-    let out = '';
-    let err = '';
     const options = {
         listeners: {
-            stdout: (data: Buffer) => {
-                out += data.toString();
-            },
-            stderr: (data: Buffer) => {
-                err += data.toString();
-            }
+            stdout: (buf: Buffer) => { core.info('\u001b[38m' + buf.toString()); },
+            stderr: (buf: Buffer) => { core.info('\u001b[35m' + buf.toString()); }
         }
     };
     let args = ['-noaudio', '-b'];
