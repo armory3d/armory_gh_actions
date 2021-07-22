@@ -1,6 +1,6 @@
 {
   "name": "armory_gh_actions",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "Setup Armory3D SDK",
   "main": "index.js",
   "scripts": {

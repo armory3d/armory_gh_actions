@@ -6,6 +6,8 @@ import * as path from 'path';
 
 async function main(): Promise<void> {
 
+    console.log(__dirname);
+
     let blend = core.getInput('blend', { required: true });
     let exporter = core.getInput('exporter', { required: false });
     //let blender_version = core.getInput('blender_version', { required: false });
@@ -40,7 +42,7 @@ async function main(): Promise<void> {
         info('Checkout ' + path + ' ' + armory_version)
         await checkoutVersion('armsdk/armory', armory_version);
     }
-   
+
     if (exporter === undefined) {
         core.startGroup('Build project');
         try {
@@ -96,7 +98,7 @@ async function buildProject(blend: string) {
 }
 
 async function exportProject(blend: string, exporter: string) {
-    await runBlender(blend, 'blender/project_export.py', [exporter])
+    await runBlender(blend, path.join(__dirname, 'blender/project_export.py'), [exporter])
 }
 
 async function runBlender(blend?: string, script?: string, extraArgs?: string[]) {
