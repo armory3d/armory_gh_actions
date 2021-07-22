@@ -1757,7 +1757,6 @@ const fs = __nccwpck_require__(747);
 const path = __nccwpck_require__(622);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(__dirname);
         let blend = core.getInput('blend', { required: true });
         let exporter = core.getInput('exporter', { required: false });
         //let blender_version = core.getInput('blender_version', { required: false });

@@ -6,8 +6,6 @@ import * as path from 'path';
 
 async function main(): Promise<void> {
 
-    console.log(__dirname);
-
     let blend = core.getInput('blend', { required: true });
     let exporter = core.getInput('exporter', { required: false });
     //let blender_version = core.getInput('blender_version', { required: false });
