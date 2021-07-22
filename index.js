@@ -1841,12 +1841,12 @@ function checkoutVersion(path, version) {
 }
 function enableArmoryAddon() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield runBlender(undefined, 'blender/addon_install.py', ['armsdk']);
+        yield runBlender(undefined, path.join(__dirname, 'blender/addon_install.py'), ['armsdk']);
     });
 }
 function buildProject(blend) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield runBlender(blend, 'blender/project_build.py');
+        yield runBlender(blend, path.join(__dirname, 'blender/project_build.py'));
     });
 }
 function exportProject(blend, exporter) {

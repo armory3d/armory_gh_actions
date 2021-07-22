@@ -90,11 +90,11 @@ async function checkoutVersion(path: string, version: string) {
 }
 
 async function enableArmoryAddon() {
-    await runBlender(undefined, 'blender/addon_install.py', ['armsdk'])
+    await runBlender(undefined, path.join(__dirname, 'blender/addon_install.py'), ['armsdk'])
 }
 
 async function buildProject(blend: string) {
-    await runBlender(blend, 'blender/project_build.py')
+    await runBlender(blend, path.join(__dirname, 'blender/project_build.py'))
 }
 
 async function exportProject(blend: string, exporter: string) {
