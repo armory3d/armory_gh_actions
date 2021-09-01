@@ -2,6 +2,8 @@
 /Kha/
 /node_modules/
 /src/*.js
-/test/**
 !empty.blend
 armsdk/
+build_*/
+khafile.js
+Main.hx

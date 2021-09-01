@@ -1755,113 +1755,148 @@ const core = __nccwpck_require__(186);
 const exec_1 = __nccwpck_require__(514);
 const fs = __nccwpck_require__(747);
 const path = __nccwpck_require__(622);
+const LOCAL_ARMSDK_PATH = "_armsdk_"; // Hack to not use local armsdk (https://github.com/armory3d/armsdk/issues/31)
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let blend = core.getInput('blend', { required: true });
-        let exporter = core.getInput('exporter', { required: false });
-        //let blender_version = core.getInput('blender_version', { required: false });
+        let exporter_publish = core.getInput('export', { required: false });
+        let exporter_build = core.getInput('build', { required: false });
+        /*
+        if ((exporter_publish === null && exporter_build === null)) {
+            core.setFailed('Either export or build have to be specified');
+            return;
+        }
+        if (exporter_publish !== null && exporter_build !== null) {
+            core.setFailed('Only set exc');
+            return;
+        } */
+        let blender_version = core.getInput('blender', { required: false });
         let armsdk_repository = core.getInput('armsdk_repository', { required: false });
-        let armory_version = core.getInput('armory_version', { required: false });
+        let armsdk_version = core.getInput('armsdk', { required: false });
         //let renderpath = core.getInput('renderpath', { required: false });
-        core.startGroup('Settings');
-        core.info('blend: ' + blend);
-        core.info('exporter: ' + exporter);
-        //core.info('blender_version: ' + blender_version);
-        core.info('armsdk_repository: ' + armsdk_repository);
-        core.info('armory_version: ' + armory_version);
-        //core.info('renderpath: ' + renderpath);
-        core.endGroup();
-        core.startGroup('Setup');
-        //await installBlender(blender_version);
-        yield installBlender();
-        yield exec_1.exec('blender', ['--version']);
-        if (!fs.existsSync('armsdk')) {
-            yield installArmsdk(armsdk_repository);
+        // core.startGroup('Settings');
+        // core.info('blend: ' + blend);
+        // core.info('exporter: ' + exporter);
+        // core.info('blender_version: ' + blender_version);
+        // core.info('armsdk_repository: ' + armsdk_repository);
+        // core.info('armsdk_version: ' + armsdk_version);
+        // //core.info('renderpath: ' + renderpath);
+        // core.endGroup();
+        core.startGroup('Installing blender ' + blender_version);
+        let result = yield installBlender(blender_version);
+        if (result.exitCode !== 0) {
+            core.setFailed(result.stderr);
+            core.setOutput('error', result.stderr);
+            return;
         }
-        if (armory_version !== undefined && armory_version !== 'master') {
-            yield checkoutVersion('armsdk/armory', armory_version);
-        }
-        yield enableArmoryAddon('armsdk');
         core.endGroup();
-        if (exporter === undefined) {
-            core.startGroup('Build project');
-            try {
-                var code = yield buildProject(blend);
-                core.exportVariable('code', code);
+        core.startGroup('Installing armsdk ' + armsdk_version);
+        if (!fs.existsSync(LOCAL_ARMSDK_PATH)) {
+            result = yield cloneArmsdk(armsdk_repository, armsdk_version);
+            if (result.exitCode !== 0) {
+                core.setFailed(result.stderr);
+                core.setOutput('error', result.stderr);
+                return;
             }
-            catch (error) {
-                core.setFailed(error.message);
-                core.exportVariable('code', 1);
+            result = yield enableArmoryAddon(LOCAL_ARMSDK_PATH);
+            if (result.exitCode !== 0) {
+                core.setFailed(result.stderr);
+                core.setOutput('error', result.stderr);
+                return;
             }
-            core.endGroup();
         }
         else {
-            core.startGroup('Export ' + blend + ':' + exporter);
+            if (armsdk_version !== undefined) {
+                checkoutVersion(LOCAL_ARMSDK_PATH, armsdk_version);
+            }
+        }
+        core.endGroup();
+        if (exporter_publish !== undefined) {
+            core.startGroup('Publishing ' + blend + '→' + exporter_publish);
+            const t0 = Date.now();
             try {
-                yield exportProject(blend, exporter);
-                core.exportVariable('code', 0);
+                result = yield publishProject(blend, exporter_publish);
+                const time = Date.now() - t0;
+                core.setOutput('code', result.exitCode);
+                core.setOutput('time', time);
+                if (result.exitCode === 0)
+                    core.setOutput('result', result.stdout);
+                else {
+                    core.setOutput('error', result.stderr);
+                    core.setFailed(result.stderr);
+                }
             }
             catch (error) {
                 core.setFailed(error.message);
-                core.exportVariable('code', 1);
+            }
+            core.endGroup();
+        }
+        else if (exporter_build !== undefined) {
+            core.startGroup('Building ' + blend + '→' + exporter_build);
+            const t0 = Date.now();
+            try {
+                result = yield buildProject(blend, exporter_build);
+                const time = Date.now() - t0;
+                core.setOutput('code', result.exitCode);
+                core.setOutput('time', time);
+                if (result.exitCode === 0)
+                    core.setOutput('result', result.stdout);
+                else {
+                    core.setOutput('error', result.stderr);
+                    core.setFailed(result.stderr);
+                }
+            }
+            catch (error) {
+                core.setFailed(error.message);
             }
             core.endGroup();
         }
     });
 }
-// async function installBlender(version: string) {
-function installBlender() {
+function installBlender(version) {
     return __awaiter(this, void 0, void 0, function* () {
-        let args = ['snap', 'install', 'blender'];
-        // if (version !== undefined) args.push('--channel=' + version); //TODO
-        args.push('--classic');
-        yield exec_1.exec('sudo', args);
+        let args = ['snap', 'install', 'blender', '--channel=' + version, '--classic'];
+        return exec_1.getExecOutput('sudo', args);
     });
 }
-function installArmsdk(repository) {
+function cloneArmsdk(repository, version) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield exec_1.exec('git', ['clone', '--recursive', repository]);
+        let args = ['clone', '--branch', version, '--recursive', repository, LOCAL_ARMSDK_PATH];
+        return exec_1.getExecOutput('git', args);
     });
 }
 function checkoutVersion(path, version) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield exec_1.exec('git', ['-C', path, 'checkout', version]);
+        return exec_1.getExecOutput('git', ['-C', path, 'checkout', version]);
     });
 }
-function enableArmoryAddon(sdk_path) {
+function enableArmoryAddon(path) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield runBlender(undefined, path.join(__dirname, 'blender/addon_install.py'), [sdk_path]);
+        return runBlender(undefined, 'blender/addon_install.py', [path]);
     });
 }
-function buildProject(blend) {
+function buildProject(blend, exporter) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield runBlender(blend, path.join(__dirname, 'blender/project_build.py'));
+        return runBlender(blend, 'blender/build_project.py', [exporter]);
     });
 }
-function exportProject(blend, exporter) {
+function publishProject(blend, exporter) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield runBlender(blend, path.join(__dirname, 'blender/project_export.py'), [exporter]);
+        return runBlender(blend, 'blender/publish_project.py', [exporter]);
     });
 }
 function runBlender(blend, script, extraArgs) {
     return __awaiter(this, void 0, void 0, function* () {
-        const options = {
-            listeners: {
-                stdout: (buf) => { core.info('\u001b[38m' + buf.toString()); },
-                stderr: (buf) => { core.info('\u001b[35m' + buf.toString()); }
-            }
-        };
         let args = ['-noaudio', '-b'];
         if (blend !== undefined)
             args.push(blend);
         if (script !== undefined)
-            args = args.concat(['--python', script]);
-        if (extraArgs !== undefined) {
+            args = args.concat(['--python', path.join(__dirname, script)]);
+        if (extraArgs !== undefined && extraArgs.length > 0) {
             args.push('--');
             args = args.concat(extraArgs);
         }
-        // await exec('blender', args, options);
-        return exec_1.exec('blender', args, options);
+        return exec_1.getExecOutput('blender', args);
     });
 }
 main();
