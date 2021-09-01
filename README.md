@@ -1,6 +1,6 @@
 # Armory3D Github Actions
 
-[![build](https://github.com/tong/armory_gh_actions/actions/workflows/build.yml/badge.svg)](https://github.com/tong/armory_gh_actions/actions/workflows/build.yml)
+[![test](https://github.com/tong/armory_gh_actions/actions/workflows/test.yml/badge.svg)](https://github.com/tong/armory_gh_actions/actions/workflows/test.yml)
 
 This action sets up a [blender](https://www.blender.org/)/[armory](https://github.com/armory3d/armory) environment to build projects in your github workflows.
 
