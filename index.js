@@ -1813,11 +1813,11 @@ function main() {
             }
         }
         core.endGroup();
-        if (exporter_build) {
-            core.startGroup('Building ' + blend + '→' + exporter_build);
+        if (exporter_publish) {
+            core.startGroup('Publishing ' + blend + '→' + exporter_publish);
             const t0 = Date.now();
             try {
-                result = yield buildProject(blend, exporter_build);
+                result = yield publishProject(blend, exporter_publish);
                 const time = Date.now() - t0;
                 core.setOutput('code', result.exitCode);
                 core.setOutput('time', time);
@@ -1833,11 +1833,11 @@ function main() {
             }
             core.endGroup();
         }
-        if (exporter_publish) {
-            core.startGroup('Publishing ' + blend + '→' + exporter_publish);
+        else if (exporter_build) {
+            core.startGroup('Building ' + blend + '→' + exporter_build);
             const t0 = Date.now();
             try {
-                result = yield publishProject(blend, exporter_publish);
+                result = yield buildProject(blend, exporter_build);
                 const time = Date.now() - t0;
                 core.setOutput('code', result.exitCode);
                 core.setOutput('time', time);

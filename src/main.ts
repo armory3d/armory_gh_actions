@@ -46,11 +46,11 @@ async function main(): Promise<void> {
     }
     core.endGroup();
 
-    if (exporter_build) {
-        core.startGroup('Building ' + blend + '→' + exporter_build);
+    if (exporter_publish) {
+        core.startGroup('Publishing ' + blend + '→' + exporter_publish);
         const t0 = Date.now();
         try {
-            result = await buildProject(blend, exporter_build);
+            result = await publishProject(blend, exporter_publish);
             const time = Date.now() - t0;
             core.setOutput('code', result.exitCode)
             core.setOutput('time', time)
@@ -64,12 +64,11 @@ async function main(): Promise<void> {
             core.setFailed(error.message);
         }
         core.endGroup();
-    }
-    if (exporter_publish) {
-        core.startGroup('Publishing ' + blend + '→' + exporter_publish);
+    } else if (exporter_build) {
+        core.startGroup('Building ' + blend + '→' + exporter_build);
         const t0 = Date.now();
         try {
-            result = await publishProject(blend, exporter_publish);
+            result = await buildProject(blend, exporter_build);
             const time = Date.now() - t0;
             core.setOutput('code', result.exitCode)
             core.setOutput('time', time)
