@@ -8,7 +8,7 @@ inputs:
   blend:
     description: "Main blend file"
     required: true
-  export:
+  publish:
     description: "Publish project with this exporter"
     required: false
   build:

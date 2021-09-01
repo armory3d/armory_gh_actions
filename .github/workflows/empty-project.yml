@@ -37,3 +37,18 @@ jobs:
         run: |
           echo "Code: ${{ steps.build.outputs.code }}"
           echo "Time: ${{ steps.build.outputs.time }}"
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish
+        id: build
+        uses: ./
+        with:
+          blender: latest/candidate
+          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
+          publish: linux-hl
+      - name: Result
+        run: |
+          echo "Code: ${{ steps.build.outputs.code }}"
+          echo "Time: ${{ steps.build.outputs.time }}"

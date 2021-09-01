@@ -1778,17 +1778,8 @@ const LOCAL_ARMSDK_PATH = "_armsdk_"; // TODO HACK to not use local armsdk (http
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let blend = core.getInput('blend', { required: true });
-        let exporter_publish = core.getInput('export', { required: false });
         let exporter_build = core.getInput('build', { required: false });
-        /*
-        if ((exporter_publish === null && exporter_build === null)) {
-            core.setFailed('Either export or build have to be specified');
-            return;
-        }
-        if (exporter_publish !== null && exporter_build !== null) {
-            core.setFailed('Only set exc');
-            return;
-        } */
+        let exporter_publish = core.getInput('publish', { required: false });
         let blender_version = core.getInput('blender', { required: false });
         let armsdk_repository = core.getInput('armsdk_repository', { required: false });
         let armsdk_version = core.getInput('armsdk', { required: false });
@@ -1822,11 +1813,11 @@ function main() {
             }
         }
         core.endGroup();
-        if (exporter_publish !== undefined) {
-            core.startGroup('Publishing ' + blend + '→' + exporter_publish);
+        if (exporter_build !== undefined) {
+            core.startGroup('Building ' + blend + '→' + exporter_build);
             const t0 = Date.now();
             try {
-                result = yield publishProject(blend, exporter_publish);
+                result = yield buildProject(blend, exporter_build);
                 const time = Date.now() - t0;
                 core.setOutput('code', result.exitCode);
                 core.setOutput('time', time);
@@ -1842,11 +1833,11 @@ function main() {
             }
             core.endGroup();
         }
-        else if (exporter_build !== undefined) {
-            core.startGroup('Building ' + blend + '→' + exporter_build);
+        if (exporter_publish !== undefined) {
+            core.startGroup('Publishing ' + blend + '→' + exporter_publish);
             const t0 = Date.now();
             try {
-                result = yield buildProject(blend, exporter_build);
+                result = yield publishProject(blend, exporter_publish);
                 const time = Date.now() - t0;
                 core.setOutput('code', result.exitCode);
                 core.setOutput('time', time);
@@ -1870,15 +1861,15 @@ function cloneRepository(repository, branch, path) {
         return exec_1.getExecOutput('git', args);
     });
 }
+function checkoutRepository(path, version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return exec_1.getExecOutput('git', ['-C', path, 'checkout', version]);
+    });
+}
 function installBlender(version) {
     return __awaiter(this, void 0, void 0, function* () {
         let args = ['snap', 'install', 'blender', '--channel=' + version, '--classic'];
         return exec_1.getExecOutput('sudo', args);
-    });
-}
-function checkoutRepository(path, version) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return exec_1.getExecOutput('git', ['-C', path, 'checkout', version]);
     });
 }
 function enableArmoryAddon(path) {
