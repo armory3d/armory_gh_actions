@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tong/armory_gh_action@v0.33.0
+      - uses: tong/armory_gh_action@v0.34.0
         with:
             blend: project.blend
 ```
@@ -24,7 +24,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tong/armory_gh_action@v0.33.0
+      - uses: tong/armory_gh_action@v0.34.0
         with:
             blend: project.blend
             exporter: html5

@@ -1796,7 +1796,7 @@ function main() {
             core.endGroup();
         }
         else {
-            core.startGroup('Export ' + blend + ' : ' + exporter);
+            core.startGroup('Export ' + blend + ':' + exporter);
             try {
                 yield exportProject(blend, exporter);
                 core.exportVariable('code', 0);
@@ -1860,7 +1860,8 @@ function runBlender(blend, script, extraArgs) {
             args.push('--');
             args = args.concat(extraArgs);
         }
-        yield exec_1.exec('blender', args, options);
+        // await exec('blender', args, options);
+        return exec_1.exec('blender', args, options);
     });
 }
 main();

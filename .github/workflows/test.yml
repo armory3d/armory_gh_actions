@@ -22,7 +22,7 @@ jobs:
       #   with:
       #     path: ./armsdk
       #     key: armsdk-cache-${{ env.armsdk-cache-version }}
-      - name: Build test project
+      - name: Build
         uses: ./
         with:
           blend: test/empty.blend

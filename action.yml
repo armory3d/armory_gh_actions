@@ -11,14 +11,14 @@ inputs:
   exporter:
     description: 'Exporter name'
     required: false
-  armory_version:
-    description: 'Armory version to use'
-    required: false
-    default: 'master'
   armsdk_repository:
     description: 'Path to the armsdk repository'
     required: false
     default: 'https://github.com/armory3d/armsdk'
+  armory_version:
+    description: 'Armory version to use'
+    required: false
+    default: 'master'
 outputs:
   code:
     description: 'Exit code'
