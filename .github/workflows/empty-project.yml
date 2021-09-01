@@ -18,6 +18,7 @@ jobs:
         with:
           blender: latest/candidate
           blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
+          publish: html5
       - name: Result
         run: |
           echo "Code: ${{ steps.build.outputs.code }}"
