@@ -1808,7 +1808,7 @@ function main() {
             }
         }
         else {
-            if (armsdk_version !== undefined) {
+            if (armsdk_version) {
                 checkoutRepository(LOCAL_ARMSDK_PATH, armsdk_version);
             }
         }
@@ -1890,11 +1890,11 @@ function publishProject(blend, exporter) {
 function runBlender(blend, script, extraArgs) {
     return __awaiter(this, void 0, void 0, function* () {
         let args = ['-noaudio', '-b'];
-        if (blend !== undefined)
+        if (blend)
             args.push(blend);
-        if (script !== undefined)
+        if (script)
             args = args.concat(['--python', path.join(__dirname, script)]);
-        if (extraArgs !== undefined && extraArgs.length > 0) {
+        if (extraArgs && extraArgs.length > 0) {
             args.push('--');
             args = args.concat(extraArgs);
         }

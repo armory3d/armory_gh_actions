@@ -40,7 +40,7 @@ async function main(): Promise<void> {
             return;
         }
     } else {
-        if (armsdk_version !== undefined) {
+        if (armsdk_version) {
             checkoutRepository(LOCAL_ARMSDK_PATH, armsdk_version);
         }
     }
@@ -114,9 +114,9 @@ async function publishProject(blend: string, exporter: string): Promise<ExecOutp
 
 async function runBlender(blend?: string, script?: string, extraArgs?: string[]): Promise<ExecOutput> {
     let args = ['-noaudio', '-b'];
-    if (blend !== undefined) args.push(blend);
-    if (script !== undefined) args = args.concat(['--python', path.join(__dirname, script)]);
-    if (extraArgs !== undefined && extraArgs.length > 0) {
+    if (blend) args.push(blend);
+    if (script) args = args.concat(['--python', path.join(__dirname, script)]);
+    if (extraArgs && extraArgs.length > 0) {
         args.push('--');
         args = args.concat(extraArgs);
     }
