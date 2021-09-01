@@ -26,12 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Publish ${{ github.workflow }}
+      - name: Publish
         id: build
         uses: ./
         with:
           blender: latest/candidate
-          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
           build: krom-linux
       - name: Result
         run: |
