@@ -1813,7 +1813,7 @@ function main() {
             }
         }
         core.endGroup();
-        if (exporter_build !== undefined) {
+        if (exporter_build) {
             core.startGroup('Building ' + blend + '→' + exporter_build);
             const t0 = Date.now();
             try {
@@ -1833,7 +1833,7 @@ function main() {
             }
             core.endGroup();
         }
-        if (exporter_publish !== undefined) {
+        if (exporter_publish) {
             core.startGroup('Publishing ' + blend + '→' + exporter_publish);
             const t0 = Date.now();
             try {
