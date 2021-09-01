@@ -1741,6 +1741,25 @@ function copyFile(srcFile, destFile, force) {
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -1751,11 +1770,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __nccwpck_require__(186);
+const core = __importStar(__nccwpck_require__(186));
 const exec_1 = __nccwpck_require__(514);
-const fs = __nccwpck_require__(747);
-const path = __nccwpck_require__(622);
-const LOCAL_ARMSDK_PATH = "_armsdk_"; // Hack to not use local armsdk (https://github.com/armory3d/armsdk/issues/31)
+const fs = __importStar(__nccwpck_require__(747));
+const path = __importStar(__nccwpck_require__(622));
+const LOCAL_ARMSDK_PATH = "_armsdk_"; // TODO HACK to not use local armsdk (https://github.com/armory3d/armsdk/issues/31)
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let blend = core.getInput('blend', { required: true });
@@ -1774,14 +1793,6 @@ function main() {
         let armsdk_repository = core.getInput('armsdk_repository', { required: false });
         let armsdk_version = core.getInput('armsdk', { required: false });
         //let renderpath = core.getInput('renderpath', { required: false });
-        // core.startGroup('Settings');
-        // core.info('blend: ' + blend);
-        // core.info('exporter: ' + exporter);
-        // core.info('blender_version: ' + blender_version);
-        // core.info('armsdk_repository: ' + armsdk_repository);
-        // core.info('armsdk_version: ' + armsdk_version);
-        // //core.info('renderpath: ' + renderpath);
-        // core.endGroup();
         core.startGroup('Installing blender ' + blender_version);
         let result = yield installBlender(blender_version);
         if (result.exitCode !== 0) {
@@ -1792,7 +1803,7 @@ function main() {
         core.endGroup();
         core.startGroup('Installing armsdk ' + armsdk_version);
         if (!fs.existsSync(LOCAL_ARMSDK_PATH)) {
-            result = yield cloneArmsdk(armsdk_repository, armsdk_version);
+            result = yield cloneRepository(armsdk_repository, armsdk_version, LOCAL_ARMSDK_PATH);
             if (result.exitCode !== 0) {
                 core.setFailed(result.stderr);
                 core.setOutput('error', result.stderr);
@@ -1807,7 +1818,7 @@ function main() {
         }
         else {
             if (armsdk_version !== undefined) {
-                checkoutVersion(LOCAL_ARMSDK_PATH, armsdk_version);
+                checkoutRepository(LOCAL_ARMSDK_PATH, armsdk_version);
             }
         }
         core.endGroup();
@@ -1853,19 +1864,19 @@ function main() {
         }
     });
 }
+function cloneRepository(repository, branch, path) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let args = ['clone', '--branch', branch, '--recursive', repository, path];
+        return exec_1.getExecOutput('git', args);
+    });
+}
 function installBlender(version) {
     return __awaiter(this, void 0, void 0, function* () {
         let args = ['snap', 'install', 'blender', '--channel=' + version, '--classic'];
         return exec_1.getExecOutput('sudo', args);
     });
 }
-function cloneArmsdk(repository, version) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let args = ['clone', '--branch', version, '--recursive', repository, LOCAL_ARMSDK_PATH];
-        return exec_1.getExecOutput('git', args);
-    });
-}
-function checkoutVersion(path, version) {
+function checkoutRepository(path, version) {
     return __awaiter(this, void 0, void 0, function* () {
         return exec_1.getExecOutput('git', ['-C', path, 'checkout', version]);
     });

@@ -1,0 +1,39 @@
+name: empty-project
+
+on:
+  push:
+  pull_request:
+    paths:
+      - empty-project/**
+      - .github/workflows/empty-project.yml
+
+jobs:
+  html5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish
+        id: build
+        uses: ./
+        with:
+          blender: latest/candidate
+          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
+      - name: Result
+        run: |
+          echo "Code: ${{ steps.build.outputs.code }}"
+          echo "Time: ${{ steps.build.outputs.time }}"
+  krom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish ${{ github.workflow }}
+        id: build
+        uses: ./
+        with:
+          blender: latest/candidate
+          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          build: krom-linux
+      - name: Result
+        run: |
+          echo "Code: ${{ steps.build.outputs.code }}"
+          echo "Time: ${{ steps.build.outputs.time }}"

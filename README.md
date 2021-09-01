@@ -1,6 +1,6 @@
 # Armory3D Github Actions
 
-[![test](https://github.com/tong/armory_gh_actions2/actions/workflows/test.yml/badge.svg)](https://github.com/tong/armory_gh_actions/actions/workflows/build.yml)
+[![build](https://github.com/tong/armory_gh_actions/actions/workflows/build.yml/badge.svg)](https://github.com/tong/armory_gh_actions/actions/workflows/build.yml)
 
 This action sets up a [blender](https://www.blender.org/)/[armory](https://github.com/armory3d/armory) environment to build projects in your github workflows.
 
@@ -11,10 +11,10 @@ This action sets up a [blender](https://www.blender.org/)/[armory](https://githu
 | Name | Description | Required | Default |
 | - | - | - | - |
 | `blend` | Main blend file | Yes | N/A |
-| `export` | Publish project with exporter name | No | The default exporter is used if undefined |
-| `build` | Build project with exporter name | No | The default exporter is used if undefined |
-| `blender` | Blender version to use ([snap](https://snapcraft.io/blender)) | No | latest/stable |
-| `armsdk` | armsdk version/ref to use | No | `master`
+| `export` | Publish exporter name | No | The default exporter is used if undefined |
+| `build` | Build exporter name | No | The default exporter is used if undefined |
+| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | latest/stable |
+| `armsdk` | armsdk ref | No | `master`
 | `armsdk_repository` | Path to the armsdk repository | No | `https://github.com/armory3d/armsdk`
 
 

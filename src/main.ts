@@ -4,7 +4,7 @@ import { exec, getExecOutput, ExecOutput } from '@actions/exec';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const LOCAL_ARMSDK_PATH = "_armsdk_"; // Hack to not use local armsdk (https://github.com/armory3d/armsdk/issues/31)
+const LOCAL_ARMSDK_PATH = "_armsdk_"; // TODO HACK to not use local armsdk (https://github.com/armory3d/armsdk/issues/31)
 
 async function main(): Promise<void> {
 
@@ -20,20 +20,10 @@ async function main(): Promise<void> {
         core.setFailed('Only set exc');
         return;
     } */
-
     let blender_version = core.getInput('blender', { required: false });
     let armsdk_repository = core.getInput('armsdk_repository', { required: false });
     let armsdk_version = core.getInput('armsdk', { required: false });
     //let renderpath = core.getInput('renderpath', { required: false });
-
-    // core.startGroup('Settings');
-    // core.info('blend: ' + blend);
-    // core.info('exporter: ' + exporter);
-    // core.info('blender_version: ' + blender_version);
-    // core.info('armsdk_repository: ' + armsdk_repository);
-    // core.info('armsdk_version: ' + armsdk_version);
-    // //core.info('renderpath: ' + renderpath);
-    // core.endGroup();
 
     core.startGroup('Installing blender ' + blender_version);
     let result = await installBlender(blender_version);
@@ -46,7 +36,7 @@ async function main(): Promise<void> {
 
     core.startGroup('Installing armsdk ' + armsdk_version);
     if (!fs.existsSync(LOCAL_ARMSDK_PATH)) {
-        result = await cloneArmsdk(armsdk_repository, armsdk_version);
+        result = await cloneRepository(armsdk_repository, armsdk_version, LOCAL_ARMSDK_PATH);
         if (result.exitCode !== 0) {
             core.setFailed(result.stderr);
             core.setOutput('error', result.stderr)
@@ -60,7 +50,7 @@ async function main(): Promise<void> {
         }
     } else {
         if (armsdk_version !== undefined) {
-            checkoutVersion(LOCAL_ARMSDK_PATH, armsdk_version);
+            checkoutRepository(LOCAL_ARMSDK_PATH, armsdk_version);
         }
     }
     core.endGroup();
@@ -104,17 +94,17 @@ async function main(): Promise<void> {
     }
 }
 
+async function cloneRepository(repository: string, branch: string, path: string): Promise<ExecOutput> {
+    let args = ['clone', '--branch', branch, '--recursive', repository, path];
+    return getExecOutput('git', args);
+}
+
 async function installBlender(version: string): Promise<ExecOutput> {
     let args = ['snap', 'install', 'blender', '--channel=' + version, '--classic'];
     return getExecOutput('sudo', args);
 }
 
-async function cloneArmsdk(repository: string, version: string): Promise<ExecOutput> {
-    let args = ['clone', '--branch', version, '--recursive', repository, LOCAL_ARMSDK_PATH];
-    return getExecOutput('git', args);
-}
-
-async function checkoutVersion(path: string, version: string): Promise<ExecOutput> {
+async function checkoutRepository(path: string, version: string): Promise<ExecOutput> {
     return getExecOutput('git', ['-C', path, 'checkout', version]);
 }
 
