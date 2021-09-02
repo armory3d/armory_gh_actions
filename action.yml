@@ -9,30 +9,30 @@ inputs:
     description: "Main blend file"
     required: true
   publish:
-    description: "Publish project with this exporter"
+    description: "Publish this export preset"
     required: false
   build:
-    description: "Build project with this exporter"
+    description: "Build this export preset"
     required: false
   blender:
     description: "Blender version to use (snap)"
     required: false
     default: latest/stable
-  armsdk:
-    description: "Armsdk version/ref to use"
-    required: false
-    default: master
-  armsdk_repository:
-    description: "Path to the armsdk repository"
+  armsdk_url:
+    description: "URL of the armsdk repository"
     required: false
     default: "https://github.com/armory3d/armsdk"
+  armsdk_ref:
+    description: "armsdk version/ref to use"
+    required: false
+    default: master
 outputs:
   code:
     description: "Exit code"
   result:
-    description: "Build stdout message"
+    description: "Process stdout"
   error:
-    description: "Build stderr message"
+    description: "Process stderr"
   time:
     description: "Build time"
 branding:

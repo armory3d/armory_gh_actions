@@ -13,11 +13,13 @@ async function main(): Promise<void> {
     let exporter_build = core.getInput('build', { required: false });
     let exporter_publish = core.getInput('publish', { required: false });
     let blender_version = core.getInput('blender', { required: false });
-    let armsdk_repository = core.getInput('armsdk_repository', { required: false });
-    let armsdk_version = core.getInput('armsdk', { required: false });
+    let armsdk_url = core.getInput('armsdk_url', { required: false });
+    let armsdk_ref = core.getInput('armsdk_ref', { required: false });
     //let renderpath = core.getInput('renderpath', { required: false });
 
     fs.stat(BLENDER_BIN, (err, stat) => {
+        core.debug('error:'+err);
+        core.debug('stat:'+stat);
         if (!err) {
             core.warning('Blender already installed');
         }
@@ -32,7 +34,7 @@ async function main(): Promise<void> {
     }
     core.endGroup();
 
-    core.startGroup('Installing armsdk ' + armsdk_version);
+    core.startGroup('Installing armsdk ' + armsdk_ref);
     /*
     if (!fs.existsSync(LOCAL_ARMSDK_PATH)) {
         result = await cloneRepository(armsdk_repository, LOCAL_ARMSDK_PATH, armsdk_version);
@@ -53,7 +55,7 @@ async function main(): Promise<void> {
         }
     }
     */
-    result = await cloneRepository(armsdk_repository, LOCAL_ARMSDK_PATH, armsdk_version);
+    result = await cloneRepository(armsdk_url, LOCAL_ARMSDK_PATH, armsdk_ref);
     if (result.exitCode !== 0) {
         core.setFailed(result.stderr);
         core.setOutput('error', result.stderr)
@@ -68,11 +70,11 @@ async function main(): Promise<void> {
     core.endGroup();
 
     if (exporter_publish) {
-        core.startGroup('Publishing ' + blend + '→' + exporter_publish);
+        core.startGroup('Publishing ' + blend + ' ' + exporter_publish);
         const t0 = Date.now();
         try {
             result = await publishProject(blend, exporter_publish);
-            core.info(""+result);
+            core.info("" + result);
             const time = Date.now() - t0;
             core.setOutput('code', result.exitCode)
             core.setOutput('time', time)
@@ -88,7 +90,7 @@ async function main(): Promise<void> {
         }
         core.endGroup();
     } else if (exporter_build) {
-        core.startGroup('Building ' + blend + '→' + exporter_build);
+        core.startGroup('Building ' + blend + ' ' + exporter_build);
         const t0 = Date.now();
         try {
             result = await buildProject(blend, exporter_build);
