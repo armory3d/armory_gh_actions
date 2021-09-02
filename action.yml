@@ -14,17 +14,14 @@ inputs:
   build:
     description: "Build project with this exporter"
     required: false
-  # renderpath:
-  #   description: 'Name of the renderpath preset to use'
-  #   required: false
   blender:
     description: "Blender version to use (snap)"
     required: false
     default: latest/stable
   armsdk:
-    description: "Armsdk ref to use"
+    description: "Armsdk version/ref to use"
     required: false
-    default: "master"
+    default: master
   armsdk_repository:
     description: "Path to the armsdk repository"
     required: false
