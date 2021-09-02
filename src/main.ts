@@ -17,9 +17,11 @@ async function main(): Promise<void> {
     let armsdk_version = core.getInput('armsdk', { required: false });
     //let renderpath = core.getInput('renderpath', { required: false });
 
-    if ((fs.statSync(BLENDER_BIN)).isFile()) {
-        core.warning('Blender already installed');
-    }
+    fs.stat(BLENDER_BIN, (err, stat) => {
+        if (!err) {
+            core.warning('Blender already installed');
+        }
+    });
 
     core.startGroup('Installing blender ' + blender_version);
     let result = await installBlender(blender_version);
