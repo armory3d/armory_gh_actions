@@ -72,6 +72,7 @@ async function main(): Promise<void> {
         const t0 = Date.now();
         try {
             result = await publishProject(blend, exporter_publish);
+            core.info(""+result);
             const time = Date.now() - t0;
             core.setOutput('code', result.exitCode)
             core.setOutput('time', time)
@@ -82,6 +83,7 @@ async function main(): Promise<void> {
                 core.setFailed(result.stderr);
             }
         } catch (error: any) {
+            core.warning(error);
             core.setFailed(error.message);
         }
         core.endGroup();

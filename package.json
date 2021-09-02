@@ -1,6 +1,6 @@
 {
   "name": "armory_gh_actions",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Armory3D Environment Setup",
   "main": "index.js",
   "scripts": {
