@@ -1794,7 +1794,7 @@ function main() {
         core.endGroup();
         core.startGroup('Installing armsdk ' + armsdk_version);
         if (!fs.existsSync(LOCAL_ARMSDK_PATH)) {
-            result = yield cloneRepository(armsdk_repository, armsdk_version, LOCAL_ARMSDK_PATH);
+            result = yield cloneRepository(armsdk_repository, LOCAL_ARMSDK_PATH, armsdk_version);
             if (result.exitCode !== 0) {
                 core.setFailed(result.stderr);
                 core.setOutput('error', result.stderr);
@@ -1855,9 +1855,11 @@ function main() {
         }
     });
 }
-function cloneRepository(repository, branch, path) {
+function cloneRepository(repository, path, branch) {
     return __awaiter(this, void 0, void 0, function* () {
-        let args = ['clone', '--branch', branch, '--recursive', repository, path];
+        let args = ['clone', '--recursive', repository, path];
+        if (branch)
+            args = args.concat('--branch', branch);
         return exec_1.getExecOutput('git', args);
     });
 }
