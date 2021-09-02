@@ -33,6 +33,7 @@ async function main(): Promise<void> {
     core.endGroup();
 
     core.startGroup('Installing armsdk ' + armsdk_version);
+    /*
     if (!fs.existsSync(LOCAL_ARMSDK_PATH)) {
         result = await cloneRepository(armsdk_repository, LOCAL_ARMSDK_PATH, armsdk_version);
         if (result.exitCode !== 0) {
@@ -50,6 +51,19 @@ async function main(): Promise<void> {
         if (armsdk_version) {
             checkoutRepository(LOCAL_ARMSDK_PATH, armsdk_version);
         }
+    }
+    */
+    result = await cloneRepository(armsdk_repository, LOCAL_ARMSDK_PATH, armsdk_version);
+    if (result.exitCode !== 0) {
+        core.setFailed(result.stderr);
+        core.setOutput('error', result.stderr)
+        return;
+    }
+    result = await enableArmoryAddon(LOCAL_ARMSDK_PATH);
+    if (result.exitCode !== 0) {
+        core.setFailed(result.stderr);
+        core.setOutput('error', result.stderr)
+        return;
     }
     core.endGroup();
 
