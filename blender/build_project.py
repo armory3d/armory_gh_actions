@@ -1,8 +1,5 @@
 import os, sys
 import bpy
-# import arm, arm.utils
-
-## Builds the project with given exporter name
 
 wrd = bpy.data.worlds['Arm']
 

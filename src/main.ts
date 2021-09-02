@@ -1,10 +1,11 @@
 
-import * as core from '@actions/core';
-import { getExecOutput, ExecOutput } from '@actions/exec';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as core from '@actions/core';
+import { getExecOutput, ExecOutput } from '@actions/exec';
 
 const LOCAL_ARMSDK_PATH = "_armsdk_"; // TODO HACK to not use local armsdk (https://github.com/armory3d/armsdk/issues/31)
+const BLENDER_BIN = "/snap/bin/blender";
 
 async function main(): Promise<void> {
 
@@ -15,6 +16,10 @@ async function main(): Promise<void> {
     let armsdk_repository = core.getInput('armsdk_repository', { required: false });
     let armsdk_version = core.getInput('armsdk', { required: false });
     //let renderpath = core.getInput('renderpath', { required: false });
+
+    if ((fs.statSync(BLENDER_BIN)).isFile()) {
+        core.warning('Blender already installed');
+    }
 
     core.startGroup('Installing blender ' + blender_version);
     let result = await installBlender(blender_version);

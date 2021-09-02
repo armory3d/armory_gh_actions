@@ -7,3 +7,4 @@ armsdk/
 build_*/
 khafile.js
 Main.hx
+*.[0-9].?*
