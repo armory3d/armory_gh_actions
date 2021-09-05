@@ -6,7 +6,7 @@ wrd = bpy.data.worlds['Arm']
 
 if(len(wrd.arm_exporterlist)) == 0:
     print('Project has no exporters')
-    exit(1)
+    sys.exit(1)
 
 if '--' in sys.argv:
     argv = sys.argv[sys.argv.index('--')+1:]
@@ -25,7 +25,7 @@ if '--' in sys.argv:
             else: i += 1
         if exporter_index == None:
             print('No exporters named ['+exporter_name+'] found')
-            exit(1)
+            sys.exit(1)
         wrd.arm_exporterlist_index = exporter_index
 
 bpy.ops.arm.build_project()
