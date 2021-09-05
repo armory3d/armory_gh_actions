@@ -23,6 +23,8 @@ jobs:
         run: |
           echo "Code: ${{ steps.build.outputs.code }}"
           echo "Time: ${{ steps.build.outputs.time }}"
+          echo "Result: ${{ steps.build.outputs.result }}"
+          echo "Error: ${{ steps.build.outputs.error }}"
   krom:
     runs-on: ubuntu-latest
     steps:

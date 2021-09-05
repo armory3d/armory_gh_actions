@@ -7,16 +7,36 @@ This action sets up a [blender](https://www.blender.org/)/[armory](https://githu
 
 ---
 
-# Examples
+## Inputs
 
-Build project with active exporter:
+| Name | Description | Required | Default |
+| - | - | - | - |
+| `blend` | Main blend file | Yes | N/A |
+| `build` | Build exporter name | No | The active armory exporter |
+| `publish` | Publish exporter name | No | The active armory exporter |
+| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | latest/stable |
+| `armsdk_url` | URL of to the armsdk repository | No | `https://github.com/armory3d/armsdk`
+| `armsdk_ref` | armsdk version/ref | No | `master`
+
+## Outputs
+
+| Name | Description | Default |
+| - | - | - |
+| `code` | Buid process exit code | |
+| `time` | Build time ms | |
+| `result` | Build process stdout |  |
+| `error` | Build process stderr |  |
+
+---
+
+## Usage/Examples
 
 ```yaml
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tong/armory_gh_action@v0.1.4
+      - uses: tong/armory_gh_action@v0.1.7
         with:
             blend: project.blend # Main blend file            
 ```
@@ -28,7 +48,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tong/armory_gh_action@v0.1.4
+      - uses: tong/armory_gh_action@v0.1.7
         with:
           blend: awesome.blend # Main blend file
           publish: AwesomeGame_linux # Name of the srmory exporter preset
@@ -55,34 +75,11 @@ jobs:
           key: armsdk-cache-${{ env.armsdk-cache-version }}
       - name: Build
         id: awesome
-        uses: ./
+        uses: tong/armory_gh_action@v0.1.7
         with:
           blend: awesome.blend
           publish: html5
           armsdk: ${{ env.armsdk_version }}
 ```
-
----
-
-# Inputs
-
-| Name | Description | Required | Default |
-| - | - | - | - |
-| `blend` | Main blend file | Yes | N/A |
-| `build` | Build exporter name | No | The active armory exporter |
-| `publish` | Publish exporter name | No | The active armory exporter |
-| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | latest/stable |
-| `armsdk` | armsdk version/ref | No | `master`
-| `armsdk_repository` | Path to the armsdk repository | No | `https://github.com/armory3d/armsdk`
-
-
-# Outputs
-
-| Name | Description | Default |
-| - | - | - |
-| `code` | Exit code | 0 |
-| `stdout` | Process stdout |  |
-| `stderr` | Process stderr |  |
-| `time` | Build time ms | |
 
 ---
