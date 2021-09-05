@@ -2,6 +2,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as core from '@actions/core';
+import * as io from '@actions/io';
 import { getExecOutput, ExecOutput } from '@actions/exec';
 
 const ARMSDK_PATH = "_armsdk_"; // TODO HACK to not use local armsdk (https://github.com/armory3d/armsdk/issues/31)
@@ -15,16 +16,14 @@ async function main(): Promise<void> {
     let blender_version = core.getInput('blender', { required: false });
     let armsdk_url = core.getInput('armsdk_url', { required: false });
     let armsdk_ref = core.getInput('armsdk_ref', { required: false });
+    // let destination = core.getInput('destination', { required: false });
     // let armory_ref = core.getInput('armory_ref', { required: false });
     //let renderpath = core.getInput('renderpath', { required: false });
 
-    fs.stat(BLENDER_BIN, (err, stat) => {
-        core.debug('error:' + err);
-        core.debug('stat:' + stat);
-        if (!err) {
-            core.warning('Blender already installed');
-        }
-    });
+    const blenderPath: string = await io.which('blender', true);
+    if (blenderPath) {
+        core.warning('Blender already installed');
+    }
 
     core.startGroup('Installing blender ' + blender_version);
     let result = await installBlender(blender_version);
@@ -56,17 +55,21 @@ async function main(): Promise<void> {
         }
     }
     */
-    result = await cloneRepository(armsdk_url, ARMSDK_PATH, armsdk_ref);
-    if (result.exitCode !== 0) {
-        core.setFailed(result.stderr);
-        core.setOutput('error', result.stderr)
-        return;
-    }
-    result = await enableArmoryAddon(ARMSDK_PATH);
-    if (result.exitCode !== 0) {
-        core.setFailed(result.stderr);
-        core.setOutput('error', result.stderr)
-        return;
+    if (!fs.existsSync(ARMSDK_PATH)) {
+        result = await cloneRepository(armsdk_url, ARMSDK_PATH, armsdk_ref);
+        if (result.exitCode !== 0) {
+            core.setFailed(result.stderr);
+            core.setOutput('error', result.stderr)
+            return;
+        }
+        result = await enableArmoryAddon(ARMSDK_PATH);
+        if (result.exitCode !== 0) {
+            core.setFailed(result.stderr);
+            core.setOutput('error', result.stderr)
+            return;
+        }
+    } else {
+        core.warning('armsdk already exists');
     }
     core.endGroup();
 
@@ -78,12 +81,12 @@ async function main(): Promise<void> {
         try {
             result = await publishProject(blend, exporter_publish);
             const time = Date.now() - t0;
-            core.setOutput('code', result.exitCode)
-            core.setOutput('time', time)
-            if (result.exitCode === 0)
-                core.setOutput('result', result.stdout)
-            else {
-                core.setOutput('error', result.stderr)
+            core.setOutput('code', result.exitCode);
+            core.setOutput('time', time);
+            if (result.exitCode === 0) {
+                core.setOutput('result', result.stdout);
+            } else {
+                core.setOutput('error', result.stderr);
                 core.setFailed(result.stderr);
             }
         } catch (error: any) {
