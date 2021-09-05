@@ -20,10 +20,10 @@ async function main(): Promise<void> {
     // let armory_ref = core.getInput('armory_ref', { required: false });
     //let renderpath = core.getInput('renderpath', { required: false });
 
-    const blenderPath: string = await io.which('blender', true);
+    /* const blenderPath: string = await io.which('blender', true);
     if (blenderPath) {
         core.warning('Blender already installed');
-    }
+    } */
 
     core.startGroup('Installing blender ' + blender_version);
     let result = await installBlender(blender_version);
