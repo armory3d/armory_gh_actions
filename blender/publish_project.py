@@ -1,5 +1,6 @@
 import os, sys
 import bpy
+import arm.make_state as state
 
 wrd = bpy.data.worlds['Arm']
 
@@ -26,7 +27,11 @@ if '--' in sys.argv:
             wrd.arm_exporterlist_index = exporter_index
 
 bpy.ops.arm.publish_project()
-bpy.ops.wm.quit_blender()
+# bpy.ops.wm.quit_blender()
+code = state.proc_build.poll()
+sys.exit(code)
+
+
 
 # if False:
 #     # exporter = sys.argv[0]
