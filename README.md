@@ -36,7 +36,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tong/armory_gh_action@v0.1.7
+      - uses: tong/armory_gh_action@v0.1.10
         with:
             blend: project.blend # Main blend file            
 ```
@@ -48,7 +48,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tong/armory_gh_action@v0.1.7
+      - uses: tong/armory_gh_action@v0.1.10
         with:
           blend: awesome.blend # Main blend file
           publish: AwesomeGame_linux # Name of the srmory exporter preset
@@ -75,7 +75,7 @@ jobs:
           key: armsdk-cache-${{ env.armsdk-cache-version }}
       - name: Build
         id: awesome
-        uses: tong/armory_gh_action@v0.1.7
+        uses: tong/armory_gh_action@v0.1.10
         with:
           blend: awesome.blend
           publish: html5
