@@ -16,16 +16,14 @@ jobs:
         id: build
         uses: ./
         with:
-          blender: latest/candidate
-          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
           publish: html5
+          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
+          blender: latest/candidate
       - name: Result
         run: |
           echo "Code: ${{ steps.build.outputs.code }}"
           echo "Time: ${{ steps.build.outputs.time }}"
-          echo "Result: ${{ steps.build.outputs.result }}"
-          echo "Error: ${{ steps.build.outputs.error }}"
-  krom:
+  krom-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -33,9 +31,9 @@ jobs:
         id: build
         uses: ./
         with:
-          blender: latest/candidate
-          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
           build: krom-linux
+          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
+          blender: latest/candidate
       - name: Result
         run: |
           echo "Code: ${{ steps.build.outputs.code }}"
@@ -44,14 +42,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Publish
-        id: build
+      - id: build
         uses: ./
         with:
-          blender: latest/candidate
-          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
           publish: linux-hl
-      - name: Result
-        run: |
-          echo "Code: ${{ steps.build.outputs.code }}"
-          echo "Time: ${{ steps.build.outputs.time }}"
+          blender: latest/stable
+          blend: test/${{ github.workflow }}/${{ github.workflow }}.blend

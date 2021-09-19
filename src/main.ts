@@ -16,7 +16,6 @@ async function main(): Promise<void> {
     let blender_version = core.getInput('blender', { required: false });
     let armsdk_url = core.getInput('armsdk_url', { required: false });
     let armsdk_ref = core.getInput('armsdk_ref', { required: false });
-    // let destination = core.getInput('destination', { required: false });
     // let armory_ref = core.getInput('armory_ref', { required: false });
     //let renderpath = core.getInput('renderpath', { required: false });
 
@@ -28,8 +27,9 @@ async function main(): Promise<void> {
     core.startGroup('Installing blender ' + blender_version);
     let result = await installBlender(blender_version);
     if (result.exitCode !== 0) {
-        core.setFailed(result.stderr);
-        core.setOutput('error', result.stderr)
+        core.setFailed('Failed to install blender');
+        core.setOutput('error', result.stderr);
+        core.endGroup();
         return;
     }
     core.endGroup();
@@ -58,14 +58,16 @@ async function main(): Promise<void> {
     if (!fs.existsSync(ARMSDK_PATH)) {
         result = await cloneRepository(armsdk_url, ARMSDK_PATH, armsdk_ref);
         if (result.exitCode !== 0) {
-            core.setFailed(result.stderr);
-            core.setOutput('error', result.stderr)
+            core.setFailed('Failed to install armsdk');
+            core.setOutput('error', result.stderr);
+            core.endGroup();
             return;
         }
         result = await enableArmoryAddon(ARMSDK_PATH);
         if (result.exitCode !== 0) {
-            core.setFailed(result.stderr);
-            core.setOutput('error', result.stderr)
+            core.setFailed('Failed to enable armory addon');
+            core.setOutput('error', result.stderr);
+            core.endGroup();
             return;
         }
     } else {
@@ -90,7 +92,7 @@ async function main(): Promise<void> {
                 core.setFailed(result.stderr);
             }
         } catch (error: any) {
-            core.warning(error);
+            core.setOutput('error', error);
             core.setFailed(error.message);
         }
         core.endGroup();
