@@ -18,7 +18,7 @@ jobs:
         with:
           publish: html5
           blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
-          blender: latest/candidate
+          blender: latest/stable
       - name: Result
         run: |
           echo "Code: ${{ steps.build.outputs.code }}"
@@ -33,7 +33,7 @@ jobs:
         with:
           build: krom-linux
           blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
-          blender: latest/candidate
+          blender: latest/stable
       - name: Result
         run: |
           echo "Code: ${{ steps.build.outputs.code }}"
@@ -46,5 +46,5 @@ jobs:
         uses: ./
         with:
           publish: linux-hl
-          blender: latest/stable
           blend: test/${{ github.workflow }}/${{ github.workflow }}.blend
+          blender: latest/stable
