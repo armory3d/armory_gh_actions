@@ -18,6 +18,10 @@ This action sets up a [blender](https://www.blender.org/)/[armory](https://githu
 | `armsdk_url` | URL of to the armsdk repository | No | `https://github.com/armory3d/armsdk`
 | `armsdk_ref` | armsdk version/ref | No | `master`
 
+The *exporter* is the name of the preset defined in: `Render Properties - Armory Exporter`:
+
+![](exporter-presets.png)
+
 ## Outputs
 
 | Name | Description | Default |
