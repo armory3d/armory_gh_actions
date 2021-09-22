@@ -5,7 +5,7 @@ import * as core from '@actions/core';
 import * as io from '@actions/io';
 import { getExecOutput, ExecOutput } from '@actions/exec';
 
-const ARMSDK_PATH = "_armsdk_"; // TODO HACK to not use local armsdk (https://github.com/armory3d/armsdk/issues/31)
+const ARMSDK_PATH = "armsdk";
 const BLENDER_BIN = "/snap/bin/blender";
 
 async function main(): Promise<void> {
