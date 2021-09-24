@@ -1,7 +1,7 @@
 Armory3D Github Actions
 =======================
 
-[![test](https://github.com/tong/armory_gh_actions/actions/workflows/test.yml/badge.svg)](https://github.com/tong/armory_gh_actions/actions/workflows/test.yml)
+[![test](https://github.com/armory3d/armory_gh_actions/actions/workflows/test.yml/badge.svg)](https://github.com/armory3d/armory_gh_actions/actions/workflows/test.yml)
 
 This action sets up a [blender](https://www.blender.org/)/[armory](https://github.com/armory3d/armory) environment to build projects in your github workflows.
 
@@ -40,7 +40,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tong/armory_gh_action@v0.1.10
+      - uses: armory3d/armory_gh_action@v0.1.10
         with:
             blend: project.blend # Main blend file            
 ```
@@ -52,10 +52,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tong/armory_gh_action@v0.1.10
+      - uses: armory3d/armory_gh_action@v0.1.10
         with:
           blend: awesome.blend # Main blend file
-          publish: AwesomeGame_linux # Name of the srmory exporter preset
+          publish: AwesomeGame_linux # Name of the armory exporter preset
           blender: latest/candidate  # Blender snap package version
           armsdk: 21.08 # Armsdk version
 ```
@@ -79,7 +79,7 @@ jobs:
           key: armsdk-cache-${{ env.armsdk-cache-version }}
       - name: Build
         id: awesome
-        uses: tong/armory_gh_action@v0.1.10
+        uses: armory3d/armory_gh_action@v0.1.10
         with:
           blend: awesome.blend
           publish: html5
