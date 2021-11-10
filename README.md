@@ -57,7 +57,7 @@ jobs:
           blend: awesome.blend # Main blend file
           publish: AwesomeGame_linux # Name of the armory exporter preset
           blender: latest/candidate  # Blender snap package version
-          armsdk: 21.08 # Armsdk version
+          armsdk: 21.11 # Armsdk version
 ```
 
 Cache armsdk to speedup builds:
@@ -67,7 +67,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      armsdk_version: 21.08
+      armsdk_version: 21.11
     steps:
       - uses: actions/checkout@v2
       - name: Cache armsdk
