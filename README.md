@@ -1,9 +1,6 @@
 Armory3D Github Actions
 =======================
-
-[![test](https://github.com/armory3d/armory_gh_actions/actions/workflows/test.yml/badge.svg)](https://github.com/armory3d/armory_gh_actions/actions/workflows/test.yml)
-
-This action sets up a [blender](https://www.blender.org/)/[armory](https://github.com/armory3d/armory) environment to build projects in your github workflows.
+This action sets up a [armory3d](https://armory3d.org/) environment to build projects in your github workflows.
 
 ---
 
@@ -11,14 +8,14 @@ This action sets up a [blender](https://www.blender.org/)/[armory](https://githu
 
 | Name | Description | Required | Default |
 | - | - | - | - |
-| `blend` | Main blend file | Yes | N/A |
+| `blend` | Main blend file | Yes | |
 | `build` | Build exporter name | No | The active armory exporter |
 | `publish` | Publish exporter name | No | The active armory exporter |
-| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | latest/stable |
+| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | `latest/stable` |
 | `armsdk_url` | URL of to the armsdk repository | No | `https://github.com/armory3d/armsdk`
 | `armsdk_ref` | armsdk version/ref | No | `master`
 
-The *exporter* is the name of the preset defined in: `Render Properties - Armory Exporter`:
+Either `build` or `publish` has to be defined with the name of the *exporter* preset defined in `Render Properties - Armory Exporter`. It can have any name, but is most likely named after the build target:
 
 ![](exporter-presets.png)
 
@@ -26,15 +23,15 @@ The *exporter* is the name of the preset defined in: `Render Properties - Armory
 
 | Name | Description | Default |
 | - | - | - |
-| `code` | Buid process exit code | |
-| `time` | Build time ms | |
-| `result` | Build process stdout |  |
-| `error` | Build process stderr |  |
+| `code` | Exit code | |
+| `time` | Duration ms | |
+| `result` | stdout data |  |
+| `error` | stderr  data |  |
 
----
 
-## Usage/Examples
+## Examples
 
+- ### Basic example
 ```yaml
 jobs:
   build:
@@ -42,11 +39,11 @@ jobs:
     steps:
       - uses: armory3d/armory_gh_action@v0.1.10
         with:
-            blend: project.blend # Main blend file            
+            blend: awesome.blend         
+            publish: html5        
 ```
 
-Build project with using specified armory exporter, blender and armsdk version:
-
+- ### Specify exporter and armsdk version
 ```yaml
 jobs:
   build:
@@ -54,14 +51,13 @@ jobs:
     steps:
       - uses: armory3d/armory_gh_action@v0.1.10
         with:
-          blend: awesome.blend # Main blend file
-          publish: AwesomeGame_linux # Name of the armory exporter preset
+          blend: awesome.blend
+          publish: linux # Name of the armory exporter
           blender: latest/candidate  # Blender snap package version
           armsdk: 21.11 # Armsdk version
 ```
 
-Cache armsdk to speedup builds:
-
+- ### Cache armsdk to speedup builds
 ```yaml
 jobs:
   build:
@@ -87,3 +83,5 @@ jobs:
 ```
 
 ---
+
+[![test](https://github.com/armory3d/armory_gh_actions/actions/workflows/test.yml/badge.svg)](https://github.com/armory3d/armory_gh_actions/actions/workflows/test.yml)
