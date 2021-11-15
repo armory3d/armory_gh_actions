@@ -37,10 +37,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: armory3d/armory_gh_actions@v0.1.10
+      - uses: actions/checkout@v2
+      - name: Publish
+        uses: armory3d/armory_gh_actions@v0.1.10
         with:
-            blend: awesome.blend         
-            publish: html5        
+          blend: awesome.blend # Main blend file
+          publish: html5 # Name of the armory exporter
 ```
 
 - ### Specify exporter and armsdk version
@@ -49,15 +51,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: armory3d/armory_gh_actions@v0.1.10
-        with:
-          blend: awesome.blend
-          publish: linux # Name of the armory exporter
-          blender: latest/candidate  # Blender snap package version
-          armsdk: 21.11 # Armsdk version
+      - uses: actions/checkout@v2
+      - name: Publish
+        uses: armory3d/armory_gh_actions@v0.1.10
+          with:
+            blend: awesome.blend # Main blend file
+            publish: linux # Name of the armory exporter
+            blender: latest/candidate  # Blender snap package version
+            armsdk_ref: 21.11 # Armsdk version
 ```
 
-- ### Cache armsdk to speedup builds
+- ### Cache armsdk to speedup builds, print build results
 ```yaml
 jobs:
   build:
@@ -79,8 +83,14 @@ jobs:
         with:
           blend: awesome.blend
           publish: html5
-          armsdk: ${{ env.armsdk_version }}
+          armsdk_ref: ${{ env.armsdk_version }}
+      - name: Result
+        run: |
+          echo "Code: ${{ steps.awesome.outputs.code }}"
+          echo "Time: ${{ steps.awesome.outputs.time }}"
 ```
+
+See: [empty-project.yml](https://github.com/armory3d/armory_gh_actions/blob/master/.github/workflows/empty-project.yml)
 
 ---
 
