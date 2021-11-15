@@ -37,7 +37,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: armory3d/armory_gh_action@v0.1.10
+      - uses: armory3d/armory_gh_actions@v0.1.10
         with:
             blend: awesome.blend         
             publish: html5        
@@ -49,7 +49,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: armory3d/armory_gh_action@v0.1.10
+      - uses: armory3d/armory_gh_actions@v0.1.10
         with:
           blend: awesome.blend
           publish: linux # Name of the armory exporter
@@ -75,7 +75,7 @@ jobs:
           key: armsdk-cache-${{ env.armsdk-cache-version }}
       - name: Build
         id: awesome
-        uses: armory3d/armory_gh_action@v0.1.10
+        uses: armory3d/armory_gh_actions@v0.1.10
         with:
           blend: awesome.blend
           publish: html5
