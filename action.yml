@@ -17,13 +17,13 @@ inputs:
   blender:
     description: "Blender version to use (snap)"
     required: false
-    default: latest/stable
+    default: 2.93lts/stable
   armsdk_url:
     description: "URL of the armsdk repository"
     required: false
     default: "https://github.com/armory3d/armsdk"
   armsdk_ref:
-    description: "armsdk version/ref to use"
+    description: "Named branch, tag, or SHA of the armsdk repository"
     required: false
     default: master
 outputs:
