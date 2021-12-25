@@ -2,22 +2,22 @@ Armory3D Github Actions
 =======================
 This action sets up a [armory3d](https://armory3d.org/) environment to build projects in your github workflows.
 
----
+# Usage
+
+See [action.yml](action.yml)
 
 ## Inputs
 
 | Name | Description | Required | Default |
 | - | - | - | - |
 | `blend` | Main blend file | Yes | |
-| `build` | Build exporter name | No | The active armory exporter |
-| `publish` | Publish exporter name | No | The active armory exporter |
+| `build` | Build exporter name | No | The active [armory exporter](.github/exporter-presets.png) |
+| `publish` | Publish exporter name | No | The active [armory exporter](.github/exporter-presets.png) |
 | `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | `latest/stable` |
 | `armsdk_url` | URL of to the armsdk repository | No | `https://github.com/armory3d/armsdk`
-| `armsdk_ref` | armsdk version/ref | No | `master`
+| `armsdk_ref` | Named branch, tag, or SHA of the armsdk repository | No | `master`
 
-Either `build` or `publish` has to be defined with the name of the *exporter* preset defined in `Render Properties - Armory Exporter`. It can have any name, but is most likely named after the build target:
-
-![](exporter-presets.png)
+Either `build` or `publish` must be given the name of an *exporter* preset defined in [`Render Properties - Armory Exporter`](exporter-presets.png). It can have any name, but is most likely named after the build target.
 
 ## Outputs
 
@@ -28,10 +28,11 @@ Either `build` or `publish` has to be defined with the name of the *exporter* pr
 | `result` | stdout data |  |
 | `error` | stderr  data |  |
 
+---
 
-## Examples
+See: [.github/workflows/empty-project.yml](.github/workflows/empty-project.yml)
 
-- ### Basic example
+### Publish project
 ```yaml
 jobs:
   build:
@@ -45,7 +46,7 @@ jobs:
           publish: html5 # Name of the armory exporter
 ```
 
-- ### Specify exporter and armsdk version
+### Custom blender, armsdk version
 ```yaml
 jobs:
   build:
@@ -58,16 +59,16 @@ jobs:
             blend: awesome.blend # Main blend file
             publish: linux # Name of the armory exporter
             blender: latest/candidate  # Blender snap package version
-            armsdk_ref: 21.11 # Armsdk version
+            armsdk_ref: 21.12 # Armsdk version
 ```
 
-- ### Cache armsdk to speedup builds, print build results
+### Cache armsdk to speedup builds, print build results
 ```yaml
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      armsdk_version: 21.11
+      armsdk_version: 21.12
     steps:
       - uses: actions/checkout@v2
       - name: Cache armsdk
@@ -89,8 +90,6 @@ jobs:
           echo "Code: ${{ steps.awesome.outputs.code }}"
           echo "Time: ${{ steps.awesome.outputs.time }}"
 ```
-
-See: [empty-project.yml](https://github.com/armory3d/armory_gh_actions/blob/master/.github/workflows/empty-project.yml)
 
 ---
 

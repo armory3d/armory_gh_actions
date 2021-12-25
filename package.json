@@ -1,6 +1,6 @@
 {
   "name": "armory_gh_actions",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Armory3D Environment Setup",
   "main": "index.js",
   "scripts": {
@@ -26,6 +26,6 @@
   "devDependencies": {
     "@types/node": "^16.9.2",
     "@vercel/ncc": "^0.31.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.5.4"
   }
 }
