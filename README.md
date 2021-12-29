@@ -13,7 +13,7 @@ See [action.yml](action.yml)
 | `blend` | Main blend file | Yes | |
 | `build` | Build exporter name | No | The active [armory exporter](.github/exporter-presets.png) |
 | `publish` | Publish exporter name | No | The active [armory exporter](.github/exporter-presets.png) |
-| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | `latest/stable` |
+| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | `2.93lts/stable` |
 | `armsdk_url` | URL of to the armsdk repository | No | `https://github.com/armory3d/armsdk`
 | `armsdk_ref` | Named branch, tag, or SHA of the armsdk repository | No | `master`
 
@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Publish
-        uses: armory3d/armory_gh_actions@v0.1.10
+        uses: armory3d/armory_gh_actions@v0.1.12
         with:
           blend: awesome.blend # Main blend file
           publish: html5 # Name of the armory exporter
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Publish
-        uses: armory3d/armory_gh_actions@v0.1.10
+        uses: armory3d/armory_gh_actions@v0.1.12
           with:
             blend: awesome.blend # Main blend file
             publish: linux # Name of the armory exporter
@@ -80,7 +80,7 @@ jobs:
           key: armsdk-cache-${{ env.armsdk-cache-version }}
       - name: Build
         id: awesome
-        uses: armory3d/armory_gh_actions@v0.1.10
+        uses: armory3d/armory_gh_actions@v0.1.12
         with:
           blend: awesome.blend
           publish: html5
