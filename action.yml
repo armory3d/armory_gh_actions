@@ -25,7 +25,7 @@ inputs:
   armsdk_ref:
     description: "Named branch, tag, or SHA of the armsdk repository"
     required: false
-    default: master
+    default: main
 outputs:
   code:
     description: "Exit code"
