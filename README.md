@@ -13,7 +13,7 @@ See [action.yml](action.yml)
 | `blend` | Main blend file | Yes | |
 | `build` | Build exporter name | No | The active [armory exporter](.github/exporter-presets.png) |
 | `publish` | Publish exporter name | No | The active [armory exporter](.github/exporter-presets.png) |
-| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | `2.93lts/stable` |
+| `blender` | Blender version ([snap](https://snapcraft.io/blender)) | No | `3.3lts/stable` |
 | `armsdk_url` | URL of to the armsdk repository | No | `https://github.com/armory3d/armsdk`
 | `armsdk_ref` | Named branch, tag, or SHA of the armsdk repository | No | `main`
 
@@ -38,9 +38,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Publish
-        uses: armory3d/armory_gh_actions@v0.1.13
+        uses: armory3d/armory_gh_actions@v0.1.15
         with:
           blend: awesome.blend # Main blend file
           publish: html5 # Name of the armory exporter
@@ -52,14 +52,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Publish
-        uses: armory3d/armory_gh_actions@v0.1.13
+        uses: armory3d/armory_gh_actions@v0.1.15
           with:
             blend: awesome.blend # Main blend file
             publish: linux # Name of the armory exporter
             blender: latest/candidate  # Blender snap package version
-            armsdk_ref: 22.01 # Armsdk version
+            armsdk_ref: 22.09 # Armsdk version
 ```
 
 ### Cache armsdk to speedup builds, print build results
@@ -68,9 +68,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      armsdk_version: 22.04
+      armsdk_version: 22.09
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache armsdk
         uses: actions/cache@v2
         env:
@@ -80,7 +80,7 @@ jobs:
           key: armsdk-cache-${{ env.armsdk-cache-version }}
       - name: Build
         id: awesome
-        uses: armory3d/armory_gh_actions@v0.1.13
+        uses: armory3d/armory_gh_actions@v0.1.15
         with:
           blend: awesome.blend
           publish: html5

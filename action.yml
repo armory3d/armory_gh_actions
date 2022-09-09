@@ -17,7 +17,7 @@ inputs:
   blender:
     description: "Blender version to use (snap)"
     required: false
-    default: 2.93lts/stable
+    default: 3.3lts/stable
   armsdk_url:
     description: "URL of the armsdk repository"
     required: false
