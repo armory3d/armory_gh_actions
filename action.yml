@@ -2,7 +2,7 @@ name: "Armory3D Setup"
 description: "Setup Armory3D SDK"
 author: "tong <tong@disktree.net>"
 runs:
-  using: "node12"
+  using: "node16"
   main: "index.js"
 inputs:
   blend:
