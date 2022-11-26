@@ -1,6 +1,6 @@
 {
   "name": "armory_gh_actions",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Armory3D Environment Setup",
   "main": "index.js",
   "scripts": {
@@ -19,13 +19,13 @@
   "author": "tong <tong@disktree.net>",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.9.1",
+    "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
     "@actions/tool-cache": "^2.0.1"
   },
   "devDependencies": {
-    "@types/node": "^18.7.16",
+    "@types/node": "^18.11.9",
     "@vercel/ncc": "^0.34.0",
-    "typescript": "^4.8.2"
+    "typescript": "^4.9.3"
   }
 }
